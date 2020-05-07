@@ -1,5 +1,5 @@
 /* ENTITIES */
-CREATE TABLE Doctors(
+CREATE TABLE Doctors (
     doc_ID INT NOT NULL AUTO_INCREMENT,
     fname VARCHAR(100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE Doctors(
 
 CREATE TABLE Nurses (
     nurse_ID INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR (100) NOT NULL,
+    fname VARCHAR (100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
     dob DATE NOT NULL,
     address VARCHAR (500) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE Nurses (
 
 CREATE TABLE Patients (
     pat_ID INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR (100) NOT NULL,
+    fname VARCHAR (100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
     dob DATE NOT NULL,
     address VARCHAR (500) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE Patients (
 CREATE TABLE Diagnosis (
     diag_ID INT NOT NULL AUTO_INCREMENT,
     name VARCHAR (100) NOT NULL,
-    specifics_details VARCHAR (500) NOT NULL,
+    specific_details VARCHAR (500) NOT NULL,
 
     PRIMARY KEY(diag_ID)
 );
@@ -63,6 +63,14 @@ CREATE TABLE Procedure (
     category VARCHAR (50) NOT NULL,
 
     PRIMARY KEY(proc_ID)
+);
+
+CREATE TABLE Result (
+    result_ID INT NOT NULL AUTO_INCREMENT,
+    result VARCHAR (200) NOT NULL,
+    result_date DATE NOT NULL,
+
+    PRIMARY KEY(result_ID)
 );
 
 CREATE TABLE Treatment (
@@ -135,9 +143,10 @@ CREATE TABLE associated_with (
 CREATE TABLE belongs_to (
     pat_ID INT NOT NULL,
     vitals_ID INT NOT NULL,
-    CONSTRAINT fk_belongs_to
+    
+    CONSTRAINT fk_belongs_to_pat_ID
         FOREIGN KEY (pat_ID)
-            REFERENCES Patients(pat_ID)
+            REFERENCES Patients(pat_ID),
     CONSTRAINT fk_checks_vitals_ID
         FOREIGN KEY (vitals_ID)
             REFERENCES VitalSigns(vitals_ID)
@@ -183,6 +192,7 @@ CREATE TABLE generate_results (
 CREATE TABLE makes_diagnosis (
     doc_ID INT NOT NULL,
     diag_ID INT NOT NULL,
+    pat_ID INT NOT NULL,    
     date DATE NOT NULL,
 
     CONSTRAINT fk_makes_diagnosis_doc_ID
@@ -190,7 +200,10 @@ CREATE TABLE makes_diagnosis (
             REFERENCES Doctors(doc_ID),
     CONSTRAINT fk_makes_diagnosis_diag_ID
         FOREIGN KEY (diag_ID)
-            REFERENCES Diagnosis(diag_ID)
+            REFERENCES Diagnosis(diag_ID),
+    CONSTRAINT fk_makes_diagnosis_pat_ID
+        FOREIGN KEY (pat_ID)
+            REFERENCES Patients(pat_ID)
 );
 
 CREATE TABLE performs_procedure (
@@ -230,6 +243,7 @@ CREATE TABLE performs_test (
 CREATE TABLE prescribe_medication (
     doc_ID INT NOT NULL,
     med_ID INT NOT NULL,
+    treat_ID INT NOT NULL,    
     date DATE NOT NULL,
 
     CONSTRAINT fk_prescribe_medication_doc_ID
@@ -237,12 +251,16 @@ CREATE TABLE prescribe_medication (
             REFERENCES Doctors(doc_ID),
     CONSTRAINT fk_prescribe_medication_med_ID
         FOREIGN KEY (med_ID)
-            REFERENCES Medication(med_ID)
+            REFERENCES Medication(med_ID),
+    CONSTRAINT fk_prescribe_medication_treat_ID
+        FOREIGN KEY (treat_ID)
+            REFERENCES Treatment(treat_ID)            
 );
 
 CREATE TABLE recommends (
     doc_ID INT NOT NULL,
     treat_ID INT NOT NULL,
+    diag_ID INT NOT NULL,
     date DATE NOT NULL,
 
     CONSTRAINT fk_recommends_doc_ID
@@ -250,12 +268,16 @@ CREATE TABLE recommends (
             REFERENCES Doctors(doc_ID),
     CONSTRAINT fk_recommends_treat_ID
         FOREIGN KEY (treat_ID)
-            REFERENCES Treatment(treat_ID)
+            REFERENCES Treatment(treat_ID),
+    CONSTRAINT fk_recommends_diag_ID
+        FOREIGN KEY (diag_ID)
+            REFERENCES Diagnosis(diag_ID)            
 );
 
 CREATE TABLE treats (
     nurse_ID INT NOT NULL,
     pat_ID INT NOT NULL,
+    treat_ID INT NOT NULL,    
     date DATE NOT NULL,
 
     CONSTRAINT fk_treats_nurse_ID
@@ -263,7 +285,10 @@ CREATE TABLE treats (
             REFERENCES Doctors(nurse_ID),
     CONSTRAINT fk_treats_pat_ID
         FOREIGN KEY (pat_ID)
-            REFERENCES Patients(pat_ID)
+            REFERENCES Patients(pat_ID),
+    CONSTRAINT fk_treats_treat_ID
+        FOREIGN KEY (treat_ID)
+            REFERENCES Treatment(treat_ID)            
 );
 
 
