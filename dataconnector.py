@@ -14,7 +14,7 @@ def get_doctors():
         with connection.cursor() as cursor:
 
             # execute SQL query using execute() method.
-            cursor.execute("CALL getDoctors();")
+            cursor.execute("CALL sp_get_doctors();")
 
             # Fetch a single row using fetchone() method.
             # data = cursor.fetchone()

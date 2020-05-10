@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS Patients (
 
 CREATE TABLE IF NOT EXISTS Diagnosis (
     diag_ID INT NOT NULL AUTO_INCREMENT,
+    icd_ID INT,
+    icd_description VARCHAR (1000),
     name VARCHAR (100) NOT NULL,
     specifics_details VARCHAR (500) NOT NULL,
 
@@ -67,6 +69,14 @@ CREATE TABLE IF NOT EXISTS Procedures (
     category VARCHAR(50) NOT NULL,
 
     PRIMARY KEY(proc_ID)
+);
+
+CREATE TABLE IF NOT EXISTS  Results (
+    result_ID INT NOT NULL AUTO_INCREMENT,
+    result VARCHAR (200) NOT NULL,
+    result_date DATE NOT NULL,
+
+    PRIMARY KEY(result_ID)
 );
 
 CREATE TABLE IF NOT EXISTS Treatments (
@@ -181,17 +191,24 @@ CREATE TABLE IF NOT EXISTS generate_results (
         PRIMARY KEY(test_ID,result_ID),
     CONSTRAINT fk_generate_results_test_ID
         FOREIGN KEY (test_ID)
-            REFERENCES Tests(test_ID)
+            REFERENCES Tests(test_ID),
+    CONSTRAINT fk_generate_results_result_ID
+        FOREIGN KEY (result_ID)
+            REFERENCES Results(result_ID)
 );
 
 CREATE TABLE IF NOT EXISTS makes_diagnosis (
     doc_ID INT NOT NULL,
+    result_ID INT NOT NULL ,
     diag_ID INT NOT NULL,
     date DATE NOT NULL,
 
     CONSTRAINT fk_makes_diagnosis_doc_ID
         FOREIGN KEY (doc_ID)
             REFERENCES Doctors(doc_ID),
+    CONSTRAINT fk_makes_diagnosis_result_ID
+        FOREIGN KEY (result_ID)
+            REFERENCES Results(result_ID),
     CONSTRAINT fk_makes_diagnosis_diag_ID
         FOREIGN KEY (diag_ID)
             REFERENCES Diagnosis(diag_ID)
@@ -300,7 +317,7 @@ CREATE TABLE IF NOT EXISTS Resident (
 
 # GRANT ALL PRIVILEGES ON HOSPITAL.* to 'sysAdmin'@'%' IDENTIFIED BY 'sysAdmin123';
 
-CREATE OR REPLACE PROCEDURE getDoctors()
+CREATE OR REPLACE PROCEDURE sp_get_doctors()
     BEGIN
         SELECT
             fname
@@ -309,4 +326,4 @@ CREATE OR REPLACE PROCEDURE getDoctors()
     END;
 
 
-CALL getDoctors();
+CALL sp_get_doctors();
