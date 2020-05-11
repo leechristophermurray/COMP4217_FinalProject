@@ -3,6 +3,17 @@
 CREATE DATABASE IF NOT EXISTS HOSPITAL DEFAULT CHARACTER SET UTF8 DEFAULT COLLATE UTF8_BIN;
 USE HOSPITAL;
 
+CREATE TABLE IF NOT EXISTS Secretaries(
+    sec_ID INT NOT NULL AUTO_INCREMENT,
+    fname VARCHAR(100) NOT NULL,
+    lname VARCHAR (100) NOT NULL,
+    dob DATE NOT NULL,
+    address VARCHAR (500) NOT NULL,
+    phone INT(11) NOT NULL,
+
+    PRIMARY KEY(sec_ID)
+);
+
 CREATE TABLE IF NOT EXISTS Doctors(
     doc_ID INT NOT NULL AUTO_INCREMENT,
     fname VARCHAR(100) NOT NULL,
@@ -326,4 +337,61 @@ CREATE OR REPLACE PROCEDURE sp_get_doctors()
     END;
 
 
-CALL sp_get_doctors();
+# CALL sp_get_doctors();
+
+CREATE OR REPLACE PROCEDURE sp_get_currentuser()
+    BEGIN
+        SELECT SESSION_USER(),CURRENT_USER();
+    END;
+
+
+ # CALL sp_get_currentuser();
+
+
+
+#
+
+CREATE OR REPLACE PROCEDURE
+    sp_add_secretary(
+    fname VARCHAR(100),
+    lname VARCHAR (100),
+    dob DATE,
+    address VARCHAR (500),
+    phone INT(11)
+)
+    BEGIN
+        SET @username = CONCAT(fname,lname);
+        SET @password = CONCAT(fname,lname);
+
+        SET @sql = CONCAT('GRANT SELECT,INSERT ON HOSPITAL.* to \'',@username,'\'@\'\%\' IDENTIFIED BY \'',@password,'\'');
+        PREPARE stmt from @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+
+        INSERT INTO Secretaries VALUES (NULL, fname, lname, dob, address, phone);
+    END;
+
+# CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
+
+CREATE OR REPLACE PROCEDURE
+    sp_add_nurse(
+    fname VARCHAR(100),
+    lname VARCHAR (100),
+    dob DATE,
+    address VARCHAR (500),
+    phone INT(11),
+    category VARCHAR (100)
+)
+    BEGIN
+        SET @username = CONCAT(fname,lname);
+        SET @password = CONCAT(fname,lname);
+
+        SET @sql = CONCAT('GRANT SELECT,INSERT,UPDATE ON HOSPITAL.* to \'',@username,'\'@\'\%\' IDENTIFIED BY \'',@password,'\'');
+        PREPARE stmt from @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+
+        INSERT INTO Nurses VALUES (NULL, fname, lname, dob, address, phone, category);
+    END;
+
+ # CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');

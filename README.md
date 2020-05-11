@@ -10,6 +10,13 @@ run the below commands first
 ```pip install Flask```
 
 
+## Start
+
+run the following command
+
+```python app.py```
+
+
 
 
 
