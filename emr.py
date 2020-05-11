@@ -14,14 +14,18 @@ app.config['SQL_DB'] = 'HOSPITAL'
 def login():
     error = None
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username == '' or password == '':
+        app.config.update(
+            SQL_USER = request.form['username'],
+            SQL_PASSWORD = request.form['password']
+        )
+        if app.config['SQL_USER'] == '' or app.config['SQL_PASSWORD'] == '':
             error = 'Invalid Credentials. Please try again.'
         else:
-            result = dataconnector.login(username=username, password=password)
+            app.config.update(
+                SQL_USER= dataconnector.login(username=app.config['SQL_USER'], password=app.config['SQL_PASSWORD'])
+            )
             # print(result)
-            return render_template('home.html', username=result)
+            return render_template('home.html', username=app.config['SQL_USER'])
     return render_template('login.html', error=error)
 
 
