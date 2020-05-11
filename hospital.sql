@@ -363,7 +363,7 @@ CREATE OR REPLACE PROCEDURE
         SET @username = CONCAT(fname,lname);
         SET @password = CONCAT(fname,lname);
 
-        SET @sql = CONCAT('GRANT SELECT,INSERT,EXECUTE ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+        SET @sql = CONCAT('GRANT SELECT,INSERT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
         PREPARE stmt from @sql;
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;
@@ -394,4 +394,4 @@ CREATE OR REPLACE PROCEDURE
         INSERT INTO Nurses VALUES (NULL, fname, lname, dob, address, phone, category);
     END;
 
- # CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
+# CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
