@@ -341,7 +341,7 @@ CREATE OR REPLACE PROCEDURE sp_get_doctors()
 
 CREATE OR REPLACE PROCEDURE sp_get_currentuser()
     BEGIN
-        SELECT SESSION_USER(),CURRENT_USER();
+        SELECT SESSION_USER();
     END;
 
 
@@ -363,7 +363,7 @@ CREATE OR REPLACE PROCEDURE
         SET @username = CONCAT(fname,lname);
         SET @password = CONCAT(fname,lname);
 
-        SET @sql = CONCAT('GRANT SELECT,INSERT ON HOSPITAL.* to \'',@username,'\'@\'\%\' IDENTIFIED BY \'',@password,'\'');
+        SET @sql = CONCAT('GRANT SELECT,INSERT,EXECUTE ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
         PREPARE stmt from @sql;
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;
@@ -386,7 +386,7 @@ CREATE OR REPLACE PROCEDURE
         SET @username = CONCAT(fname,lname);
         SET @password = CONCAT(fname,lname);
 
-        SET @sql = CONCAT('GRANT SELECT,INSERT,UPDATE ON HOSPITAL.* to \'',@username,'\'@\'\%\' IDENTIFIED BY \'',@password,'\'');
+        SET @sql = CONCAT('GRANT SELECT,INSERT,UPDATE ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
         PREPARE stmt from @sql;
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;

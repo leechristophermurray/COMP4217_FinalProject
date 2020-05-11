@@ -1044,7 +1044,7 @@
       <Charset>utf8mb4</Charset>
     </collation>
     <user id="334" parent="1" name="CarlaDavis">
-      <Host>\%</Host>
+      <Host>%</Host>
     </user>
     <user id="335" parent="1" name="SusanWilby">
       <Host>\%</Host>
@@ -1126,7 +1126,7 @@
       <RoutineKind>procedure</RoutineKind>
     </routine>
     <routine id="388" parent="4" name="sp_add_secretary">
-      <SourceTextLength>398</SourceTextLength>
+      <SourceTextLength>405</SourceTextLength>
       <Definer>root@localhost</Definer>
       <RoutineKind>procedure</RoutineKind>
     </routine>
