@@ -326,13 +326,45 @@ CREATE TABLE IF NOT EXISTS Resident (
 );
 
 
+
+# Roles
+
+CREATE OR REPLACE ROLE Secretary;
+GRANT SELECT,INSERT,UPDATE ON patients.* TO Secretary;
+
+CREATE OR REPLACE ROLE Nurse;
+GRANT SELECT,INSERT,UPDATE ON accesses.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON administers.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON checks.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON treats.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON patients.* TO Nurse;
+
+CREATE OR REPLACE ROLE Doctor;
+GRANT SELECT,INSERT,UPDATE ON examine.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON makes_diagnosis.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON performs_procedure.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON performs_test.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON prescribe_medication.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON recommends.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON patients.* TO Doctor;
+
+CREATE OR REPLACE ROLE AppUser;
+GRANT USAGE, SELECT ON HOSPITAL.* TO AppUser;
+GRANT SELECT ON mysql.global_priv TO AppUser;
+
+
+
+
+# Store Procedures
+
+
 # GRANT ALL PRIVILEGES ON HOSPITAL.* to 'sysAdmin'@'%' IDENTIFIED BY 'sysAdmin123';
 
 CREATE OR REPLACE PROCEDURE sp_get_doctors()
     BEGIN
         SELECT
-            fname
-            ,lname
+            fname                                               # tuple[0]
+            ,lname                                              # tuple[1]
         FROM Doctors;
     END;
 
@@ -363,7 +395,17 @@ CREATE OR REPLACE PROCEDURE
         SET @username = CONCAT(fname,lname);
         SET @password = CONCAT(fname,lname);
 
-        SET @sql = CONCAT('GRANT SELECT,INSERT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+        SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+        PREPARE stmt from @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+
+        SET @sql = CONCAT('GRANT Secretary TO \'',@username,'\'@\'%\'');
+        PREPARE stmt from @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+
+        SET @sql = CONCAT('GRANT AppUser TO \'',@username,'\'@\'%\'');
         PREPARE stmt from @sql;
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;
@@ -386,7 +428,17 @@ CREATE OR REPLACE PROCEDURE
         SET @username = CONCAT(fname,lname);
         SET @password = CONCAT(fname,lname);
 
-        SET @sql = CONCAT('GRANT SELECT,INSERT,UPDATE ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+        SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+        PREPARE stmt from @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+
+        SET @sql = CONCAT('GRANT Nurse TO \'',@username,'\'@\'%\'');
+        PREPARE stmt from @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+
+        SET @sql = CONCAT('GRANT AppUser TO \'',@username,'\'@\'%\'');
         PREPARE stmt from @sql;
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;

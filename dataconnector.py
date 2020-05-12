@@ -46,16 +46,18 @@ def login(username, password):
         with connection.cursor() as cursor:
 
             # execute SQL query using execute() method.
-            cursor.execute("SELECT SESSION_USER();")
+            cursor.execute("SELECT current_user();")
 
             # Fetch a single row using fetchone() method.
             # data = cursor.fetchone()
 
             data = cursor.fetchone()
+            print(data[0])
             # access from data as below
             # for doc_record in data:
             #     print("fname: {0}, lname: {1}".format(doc_record[0], doc_record[1]))
-            data = data[0].replace('@localhost', '')
+            data = data[0].replace('localhost', '').replace('@', '').replace('%', '')
+            print(data)
 
     finally:
         return data

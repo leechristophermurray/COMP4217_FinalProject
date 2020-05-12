@@ -9,6 +9,7 @@
         </a></div>
       <div class="sidebar-wrapper">
         <ul class="nav">
+      {% if error %}
           <li class="nav-item active  ">
             <a class="nav-link" href="./dashboard.html">
               <i class="material-icons">dashboard</i>
@@ -51,6 +52,7 @@
               <p>Notifications</p>
             </a>
           </li>
+      {% endif %}
         </ul>
       </div>
     </div>
