@@ -9,6 +9,8 @@ run the below commands first
 
 ```pip install Flask```
 
+```pip install python-settings```
+
 
 ## Start
 

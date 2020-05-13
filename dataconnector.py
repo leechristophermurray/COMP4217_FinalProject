@@ -3,64 +3,74 @@
 import pymysql
 
 
-def get_doctors():
-    # Open database connection
-    connection = pymysql.connect("localhost", "sysAdmin", "sysAdmin123", "HOSPITAL")
-    data = ()
+class Connection:
+    SQL_HOST = 'localhost'
+    SQL_USR = ''
+    SQL_PWD = ''
+    SQL_DB = 'HOSPITAL'
 
-    try:
+    # return an database connection
+    def __init__(self, usr, pwd):
+        self.USR = usr
+        self.PWD = pwd
 
-        # prepare a cursor object using cursor() method
-        with connection.cursor() as cursor:
+    # return an database connection
+    def __enter__(self):
 
-            # execute SQL query using execute() method.
-            cursor.execute("CALL sp_get_doctors();")
+        # Open database connection
+        self.CON = pymysql.connect("localhost", self.USR, self.PWD, "HOSPITAL")
+        return self
 
-            # Fetch a single row using fetchone() method.
-            # data = cursor.fetchone()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # make sure the dbconnection gets closed
+        self.CON.close()
 
-            # Fetch all the rows in a list of lists.
-            data = cursor.fetchall()
+    def get_doctors(self):
+        data = ()
 
-            # access from data as below
-            # for doc_record in data:
-            #     print("fname: {0}, lname: {1}".format(doc_record[0], doc_record[1]))
+        try:
 
+            # prepare a cursor object using cursor() method
+            with self.CON.cursor() as cursor:
+
+                # execute SQL query using execute() method.
+                cursor.execute("CALL sp_get_doctors();")
+
+                # Fetch a single row using fetchone() method.
+                # data = cursor.fetchone()
+
+                # Fetch all the rows in a list of lists.
+                data = cursor.fetchall()
+
+                # access from data as below
+                # for doc_record in data:
+                #     print("fname: {0}, lname: {1}".format(doc_record[0], doc_record[1]))
+
+                return data
+
+        finally:
             return data
 
-    finally:
-        return data
+    def login(self):
 
-        # disconnect from server
-        connection.close()
+        data = ()
 
+        try:
 
-def login(username, password):
-    # Open database connection
-    connection = pymysql.connect("localhost", username, password, "HOSPITAL")
-    data = ()
+            # prepare a cursor object using cursor() method
+            with self.CON.cursor() as cursor:
 
-    try:
+                # execute SQL query using execute() method.
+                cursor.execute("SELECT current_user();")
 
-        # prepare a cursor object using cursor() method
-        with connection.cursor() as cursor:
+                # Fetch a single row using fetchone() method.
+                # data = cursor.fetchone()
 
-            # execute SQL query using execute() method.
-            cursor.execute("SELECT current_user();")
+                data = cursor.fetchone()
+                # access from data as below
+                # for doc_record in data:
+                #     print("fname: {0}, lname: {1}".format(doc_record[0], doc_record[1]))
+                data = data[0].replace('localhost', '').replace('@', '').replace('%', '')
 
-            # Fetch a single row using fetchone() method.
-            # data = cursor.fetchone()
-
-            data = cursor.fetchone()
-            print(data[0])
-            # access from data as below
-            # for doc_record in data:
-            #     print("fname: {0}, lname: {1}".format(doc_record[0], doc_record[1]))
-            data = data[0].replace('localhost', '').replace('@', '').replace('%', '')
-            print(data)
-
-    finally:
-        return data
-
-        # disconnect from server
-        connection.close()
+        finally:
+            return data
