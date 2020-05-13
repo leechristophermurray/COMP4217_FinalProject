@@ -9,7 +9,7 @@ class Connection:
     SQL_PWD = ''
     SQL_DB = 'HOSPITAL'
 
-    # return an database connection
+    # initialize database object
     def __init__(self, usr, pwd):
         self.USR = usr
         self.PWD = pwd
@@ -22,7 +22,7 @@ class Connection:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # make sure the dbconnection gets closed
+        # make sure the database connection gets closed
         self.CON.close()
 
     def get_doctors(self):
@@ -36,15 +36,8 @@ class Connection:
                 # execute SQL query using execute() method.
                 cursor.execute("CALL sp_get_doctors();")
 
-                # Fetch a single row using fetchone() method.
-                # data = cursor.fetchone()
-
-                # Fetch all the rows in a list of lists.
+                # Fetch all the tuples in a list of lists.
                 data = cursor.fetchall()
-
-                # access from data as below
-                # for doc_record in data:
-                #     print("fname: {0}, lname: {1}".format(doc_record[0], doc_record[1]))
 
                 return data
 
@@ -63,13 +56,8 @@ class Connection:
                 # execute SQL query using execute() method.
                 cursor.execute("SELECT current_user();")
 
-                # Fetch a single row using fetchone() method.
-                # data = cursor.fetchone()
-
+                # gets only one tuple from the database's response
                 data = cursor.fetchone()
-                # access from data as below
-                # for doc_record in data:
-                #     print("fname: {0}, lname: {1}".format(doc_record[0], doc_record[1]))
                 data = data[0].replace('localhost', '').replace('@', '').replace('%', '')
 
         finally:
