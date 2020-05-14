@@ -9,8 +9,6 @@ run the below commands first
 
 ```pip install Flask```
 
-```pip install python-settings```
-
 
 ## Start
 
@@ -24,6 +22,6 @@ run the following command
 
 
 > To Do:
->- display data from dataconnector.get_doctors() in web app.
->- devise a way to use db to authorize viewing pages in app.
+>- create queries for other requests
+>- create corresponding dataconnector functions and context_processors
  

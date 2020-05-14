@@ -38,7 +38,6 @@ class Connection:
 
                 # Fetch all the tuples in a list of lists.
                 data = cursor.fetchall()
-
                 return data
 
         finally:

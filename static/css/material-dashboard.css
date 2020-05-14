@@ -56,7 +56,7 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #212529;
+  color: #878787;
   text-align: left;
   background-color: #fafafa;
 }
@@ -15530,8 +15530,8 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 
 .main-panel {
   position: relative;
-  float: right;
-  width: calc(100% - 260px);
+  float: left;
+  width: calc(100vw - 30px);
   transition: 0.33s, cubic-bezier(0.685, 0.0473, 0.346, 1);
 }
 
@@ -17353,7 +17353,7 @@ label {
 .card .card-header-primary .card-icon,
 .card .card-header-primary:not(.card-header-icon):not(.card-header-text),
 .card .card-header-primary .card-text {
-  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+  box-shadow: 0 4px 20px 0px rgba(5, 11, 17, 0.14), 0 7px 10px -5px rgba(39, 101, 176, 0.4);
 }
 
 .card .card-header-danger .card-icon,
@@ -18573,6 +18573,10 @@ Copyright (c) 2015 Daniel Eden
     overflow-x: hidden;
   }
 
+  #navigation{
+    width: 100% !important;
+  }
+
   #navbar .navbar-collapse,
   #navigation .navbar-collapse {
     display: none !important;
@@ -19552,7 +19556,7 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .dark-edition {
-  background-color: #1a2035;
+  background-color: #25282b;
 }
 
 .dark-edition .btn,
@@ -20484,7 +20488,7 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .dark-edition .navbar .notification {
-  background: linear-gradient(60deg, #7b1fa2, #913f9e);
+  background: linear-gradient(60deg, #a21f1f, #9e3f3f);
   border: 0;
   height: 18px;
   min-width: 18px;
@@ -20532,12 +20536,12 @@ Copyright (c) 2015 Daniel Eden
   animation: heartbeat 1s infinite;
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: linear-gradient(60deg, #7b1fa2, #913f9e);
+  background-image: linear-gradient(60deg, #1f5ea2, #3f6a9e);
   color: transparent;
 }
 
 .dark-edition .card {
-  background: #202940;
+  background: #232527;
 }
 
 .dark-edition .card .card-header.card-header-text .card-title,
@@ -20574,7 +20578,7 @@ Copyright (c) 2015 Daniel Eden
 .dark-edition .card .card-footer .stats a {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: linear-gradient(60deg, #7b1fa2, #913f9e);
+  background-image: linear-gradient(60deg, #1f53a2, #3f759e);
   color: transparent;
 }
 
@@ -20620,11 +20624,11 @@ Copyright (c) 2015 Daniel Eden
 .dark-edition .card.bg-primary,
 .dark-edition .card.card-rotate.bg-primary .front,
 .dark-edition .card.card-rotate.bg-primary .back {
-  background: linear-gradient(60deg, #7b1fa2, #913f9e);
+  background: linear-gradient(60deg, #1f4fa2, #3f5f9e);
 }
 
 .dark-edition .primary-link {
-  background-image: linear-gradient(60deg, #7b1fa2, #913f9e) !important;
+  background-image: linear-gradient(60deg, #1f53a2, #3f629e) !important;
 }
 
 .dark-edition .info-link {
@@ -20703,7 +20707,7 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .dark-edition .form-check .form-check-input:checked+.form-check-sign .check:before {
-  color: #202940;
+  color: #232527;
 }
 
 .dark-edition .form-check.form-check-radio .form-check-input~.circle {
@@ -20724,32 +20728,32 @@ Copyright (c) 2015 Daniel Eden
 
 .dark-edition .popover,
 .dark-edition .tooltip-inner {
-  background: #202940;
+  background: #232527;
   color: #8b92a9;
 }
 
 .dark-edition .tooltip.bs-tooltip-top .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="top"] .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="top"] .arrow::before {
-  border-top-color: #202940;
+  border-top-color: #232527;
 }
 
 .dark-edition .tooltip.bs-tooltip-bottom .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="bottom"] .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="bottom"] .arrow::before {
-  border-bottom-color: #202940;
+  border-bottom-color: #232527;
 }
 
 .dark-edition .tooltip.bs-tooltip-right .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="right"] .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="right"] .arrow::before {
-  border-right-color: #202940;
+  border-right-color: #232527;
 }
 
 .dark-edition .tooltip.bs-tooltip-left .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="left"] .arrow::before,
 .dark-edition .tooltip.bs-tooltip-auto[x-placement^="left"] .arrow::before {
-  border-left-color: #202940;
+  border-left-color: #232527;
 }
 
 .dark-edition .form-control {

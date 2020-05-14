@@ -325,36 +325,6 @@ CREATE TABLE IF NOT EXISTS Resident (
             REFERENCES Doctors(doc_ID)
 );
 
-
-
-# Roles
-
-CREATE OR REPLACE ROLE Secretary;
-GRANT SELECT,INSERT,UPDATE ON patients.* TO Secretary;
-
-CREATE OR REPLACE ROLE Nurse;
-GRANT SELECT,INSERT,UPDATE ON accesses.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON administers.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON checks.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON treats.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON patients.* TO Nurse;
-
-CREATE OR REPLACE ROLE Doctor;
-GRANT SELECT,INSERT,UPDATE ON examine.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON makes_diagnosis.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON performs_procedure.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON performs_test.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON prescribe_medication.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON recommends.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON patients.* TO Doctor;
-
-CREATE OR REPLACE ROLE AppUser;
-GRANT USAGE, SELECT ON HOSPITAL.* TO AppUser;
-GRANT SELECT ON mysql.global_priv TO AppUser;
-
-
-
-
 # Store Procedures
 
 
@@ -395,22 +365,30 @@ CREATE OR REPLACE PROCEDURE
         SET @username = CONCAT(fname,lname);
         SET @password = CONCAT(fname,lname);
 
-        SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
-        PREPARE stmt from @sql;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
+        IF (SELECT NOT EXISTS(SELECT 1 FROM mysql.user WHERE user = @username)) THEN
 
-        SET @sql = CONCAT('GRANT Secretary TO \'',@username,'\'@\'%\'');
-        PREPARE stmt from @sql;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
+            SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
 
-        SET @sql = CONCAT('GRANT AppUser TO \'',@username,'\'@\'%\'');
-        PREPARE stmt from @sql;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_doctors TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
 
-        INSERT INTO Secretaries VALUES (NULL, fname, lname, dob, address, phone);
+            SET @sql = CONCAT('GRANT Secretary TO \'',@username,'\'@\'%\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT AppUser TO \'',@username,'\'@\'%\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            INSERT INTO Secretaries VALUES (NULL, fname, lname, dob, address, phone);
+        END IF;
     END;
 
 # CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
@@ -428,22 +406,64 @@ CREATE OR REPLACE PROCEDURE
         SET @username = CONCAT(fname,lname);
         SET @password = CONCAT(fname,lname);
 
-        SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
-        PREPARE stmt from @sql;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
+        IF (SELECT NOT EXISTS(SELECT 1 FROM mysql.user WHERE user = @username)) THEN
+            SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
 
-        SET @sql = CONCAT('GRANT Nurse TO \'',@username,'\'@\'%\'');
-        PREPARE stmt from @sql;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_doctors TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
 
-        SET @sql = CONCAT('GRANT AppUser TO \'',@username,'\'@\'%\'');
-        PREPARE stmt from @sql;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
+            SET @sql = CONCAT('GRANT Nurse TO \'',@username,'\'@\'%\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
 
-        INSERT INTO Nurses VALUES (NULL, fname, lname, dob, address, phone, category);
+            SET @sql = CONCAT('GRANT AppUser TO \'',@username,'\'@\'%\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            INSERT INTO Nurses VALUES (NULL, fname, lname, dob, address, phone, category);
+        END IF;
     END;
 
 # CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
+
+
+
+CALL sp_get_doctors();
+
+# Roles
+
+CREATE OR REPLACE ROLE Secretary;
+GRANT SELECT,INSERT,UPDATE ON patients.* TO Secretary;
+GRANT USAGE, SELECT ON doctors.* TO Secretary;
+GRANT EXECUTE ON hospital.* TO Secretary;
+GRANT SELECT, USAGE ON mysql.proc TO Secretary;
+GRANT EXECUTE ON PROCEDURE sp_get_doctors TO Secretary;
+
+CREATE OR REPLACE ROLE Nurse;
+GRANT SELECT,INSERT,UPDATE ON accesses.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON administers.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON checks.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON treats.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON patients.* TO Nurse;
+
+CREATE OR REPLACE ROLE Doctor;
+GRANT SELECT,INSERT,UPDATE ON examine.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON makes_diagnosis.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON performs_procedure.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON performs_test.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON prescribe_medication.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON recommends.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON patients.* TO Doctor;
+
+CREATE OR REPLACE ROLE AppUser;
+GRANT USAGE, SELECT ON HOSPITAL.* TO AppUser;
+GRANT SELECT ON mysql.global_priv TO AppUser;
+
+
