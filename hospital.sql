@@ -263,7 +263,7 @@ CREATE TABLE IF NOT EXISTS generate_results (
 CREATE TABLE IF NOT EXISTS makes_diagnosis (
     doc_ID INT NOT NULL,
     diag_ID INT NOT NULL,
-	pat_ID INT NOT NULL,
+    pat_ID INT NOT NULL,
     dates DATE NOT NULL,
 
     CONSTRAINT fk_makes_diagnosis_doc_ID
@@ -331,7 +331,7 @@ CREATE TABLE IF NOT EXISTS performs_treatment (
 CREATE TABLE IF NOT EXISTS prescribe_medication (
     doc_ID INT NOT NULL,
     med_ID INT NOT NULL,
-	treat_ID INT NOT NULL,
+    treat_ID INT NOT NULL,
     dates DATE NOT NULL,
 
     CONSTRAINT fk_prescribe_medication_doc_ID
@@ -348,7 +348,7 @@ CREATE TABLE IF NOT EXISTS prescribe_medication (
 CREATE TABLE IF NOT EXISTS recommends (
     doc_ID INT NOT NULL,
     treat_ID INT NOT NULL,
-	diag_ID INT NOT NULL,
+    diag_ID INT NOT NULL,
     dates DATE NOT NULL,
 
     CONSTRAINT fk_recommends_doc_ID
@@ -365,7 +365,7 @@ CREATE TABLE IF NOT EXISTS recommends (
 CREATE TABLE IF NOT EXISTS registers (
     sec_ID INT NOT NULL,
     pat_ID INT NOT NULL,
-	fam_hist_ID INT NOT NULL,
+    fam_hist_ID INT NOT NULL,
     dates DATE NOT NULL,
 
     CONSTRAINT fk_registers_sec_ID
@@ -382,7 +382,7 @@ CREATE TABLE IF NOT EXISTS registers (
 CREATE TABLE IF NOT EXISTS treats (
     nurse_ID INT NOT NULL,
     pat_ID INT NOT NULL,
-	treat_ID INT NOT NULL,
+    treat_ID INT NOT NULL,
     dates DATE NOT NULL,
 
     CONSTRAINT fk_treats_nurse_ID
