@@ -1,18 +1,8 @@
 /* ENTITIES */
 
 CREATE DATABASE IF NOT EXISTS HOSPITAL DEFAULT CHARACTER SET UTF8 DEFAULT COLLATE UTF8_BIN;
+
 USE HOSPITAL;
-
-CREATE TABLE IF NOT EXISTS Secretaries(
-    sec_ID INT NOT NULL AUTO_INCREMENT,
-    fname VARCHAR(100) NOT NULL,
-    lname VARCHAR (100) NOT NULL,
-    dob DATE NOT NULL,
-    address VARCHAR (500) NOT NULL,
-    phone INT(11) NOT NULL,
-
-    PRIMARY KEY(sec_ID)
-);
 
 CREATE TABLE IF NOT EXISTS Doctors(
     doc_ID INT NOT NULL AUTO_INCREMENT,
@@ -48,6 +38,17 @@ CREATE TABLE IF NOT EXISTS Patients (
     PRIMARY KEY(pat_ID)
 );
 
+CREATE TABLE IF NOT EXISTS Secretaries(
+    sec_ID INT NOT NULL AUTO_INCREMENT,
+    fname VARCHAR(100) NOT NULL,
+    lname VARCHAR (100) NOT NULL,
+    dob DATE NOT NULL,
+    address VARCHAR (500) NOT NULL,
+    phone INT(11) NOT NULL,
+
+    PRIMARY KEY(sec_ID)
+);
+
 CREATE TABLE IF NOT EXISTS Diagnosis (
     diag_ID INT NOT NULL AUTO_INCREMENT,
     icd_ID INT,
@@ -74,6 +75,13 @@ CREATE TABLE IF NOT EXISTS Medication (
     PRIMARY KEY(med_ID)
 );
 
+CREATE TABLE IF NOT EXISTS OtherAllergies (
+    allergy_ID INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+
+    PRIMARY KEY(allergy_ID)
+);
+
 CREATE TABLE IF NOT EXISTS Procedures (
     proc_ID INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -84,10 +92,25 @@ CREATE TABLE IF NOT EXISTS Procedures (
 
 CREATE TABLE IF NOT EXISTS  Results (
     result_ID INT NOT NULL AUTO_INCREMENT,
-    result VARCHAR (200) NOT NULL,
+    test_result VARCHAR (200) NOT NULL,
     result_date DATE NOT NULL,
 
     PRIMARY KEY(result_ID)
+);
+
+CREATE TABLE IF NOT EXISTS ScnImg (
+    scn_img_ID INT NOT NULL AUTO_INCREMENT,
+    scn_img MEDIUMBLOB NOT NULL,
+
+    PRIMARY KEY(scn_img_ID)
+);
+
+CREATE TABLE IF NOT EXISTS Tests (
+    test_ID INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR (100) NOT NULL,
+    types VARCHAR (100) NOT NULL,
+
+    PRIMARY KEY(test_ID)
 );
 
 CREATE TABLE IF NOT EXISTS Treatments (
@@ -95,14 +118,6 @@ CREATE TABLE IF NOT EXISTS Treatments (
     name VARCHAR (100) NOT NULL,
 
     PRIMARY KEY(treat_ID)
-);
-
-CREATE TABLE IF NOT EXISTS Tests (
-    test_ID INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR (100) NOT NULL,
-    type VARCHAR (100) NOT NULL,
-
-    PRIMARY KEY(test_ID)
 );
 
 CREATE TABLE IF NOT EXISTS VitalSigns (
@@ -117,10 +132,24 @@ CREATE TABLE IF NOT EXISTS VitalSigns (
 
 
 /* RELATIONSHIPS */
+CREATE TABLE IF NOT EXISTS accesses (
+    nurse_ID INT NOT NULL,
+    treat_ID INT NOT NULL,
+    dates DATE NOT NULL,
+    dosage VARCHAR(20) NOT NULL,
+    dosage_intervals VARCHAR(20) NOT NULL,
+
+    CONSTRAINT pk_accesses
+        PRIMARY KEY(nurse_ID,treat_ID),
+    CONSTRAINT fk_accesses
+        FOREIGN KEY (nurse_ID)
+            REFERENCES Nurses(nurse_ID)
+);
+
 CREATE TABLE IF NOT EXISTS administers (
     nurse_ID INT NOT NULL,
     med_ID INT NOT NULL,
-    date DATE NOT NULL,
+    dates DATE NOT NULL,
     dosage VARCHAR (20) NOT NULL,
     dosage_intervals VARCHAR (20) NOT NULL,
 
@@ -131,18 +160,28 @@ CREATE TABLE IF NOT EXISTS administers (
             REFERENCES Nurses(nurse_ID)
 );
 
-CREATE TABLE IF NOT EXISTS accesses (
-    nurse_ID INT NOT NULL,
-    treat_ID INT NOT NULL,
-    date DATE NOT NULL,
-    dosage VARCHAR(20) NOT NULL,
-    dosage_intervals VARCHAR(20) NOT NULL,
+CREATE TABLE IF NOT EXISTS afflicted_with (
+    pat_ID INT NOT NULL,
+    allergy_ID INT NOT NULL,
 
-    CONSTRAINT pk_accesses
-        PRIMARY KEY(nurse_ID,treat_ID),
-    CONSTRAINT fk_accesses
-        FOREIGN KEY (nurse_ID)
-            REFERENCES Nurses(nurse_ID)
+    CONSTRAINT fk_afflicted_with_pat_ID
+        FOREIGN KEY (pat_ID)
+            REFERENCES Patients(pat_ID),
+    CONSTRAINT fk_afflicted_with_allergy_ID
+        FOREIGN KEY (allergy_ID)
+            REFERENCES OtherAllergies(allergy_ID)
+);
+
+CREATE TABLE IF NOT EXISTS allergic_to (
+    pat_ID INT NOT NULL,
+    med_ID INT NOT NULL,
+
+    CONSTRAINT fk_allergic_to_pat_ID
+        FOREIGN KEY (pat_ID)
+            REFERENCES Patients(pat_ID),
+    CONSTRAINT fk_allergic_to_med_ID
+        FOREIGN KEY (med_ID)
+            REFERENCES Medication(med_ID)
 );
 
 CREATE TABLE IF NOT EXISTS associated_with (
@@ -157,10 +196,23 @@ CREATE TABLE IF NOT EXISTS associated_with (
             REFERENCES FamilyHistory(fam_hist_ID)
 );
 
+CREATE TABLE IF NOT EXISTS attached_to (
+    result_ID INT NOT NULL,
+    scn_img_ID INT NOT NULL,
+
+    CONSTRAINT fk_attached_to_pat_ID
+        FOREIGN KEY (result_ID)
+            REFERENCES Results(result_ID),
+    CONSTRAINT fk_attached_to_scn_img_ID 
+        FOREIGN KEY (scn_img_ID )
+            REFERENCES ScnImg (scn_img_ID )
+);
+
 CREATE TABLE IF NOT EXISTS belongs_to (
     pat_ID INT NOT NULL,
     vitals_ID INT NOT NULL,
-    CONSTRAINT fk_belongs_to
+	
+    CONSTRAINT fk_belongs_to_pat_ID
         FOREIGN KEY (pat_ID)
             REFERENCES Patients(pat_ID),
     CONSTRAINT fk_belongs_to_vitals_ID
@@ -171,7 +223,7 @@ CREATE TABLE IF NOT EXISTS belongs_to (
 CREATE TABLE IF NOT EXISTS checks (
     nurse_ID INT NOT NULL,
     vitals_ID INT NOT NULL,
-    date DATE NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_checks_nurse_ID
         FOREIGN KEY (nurse_ID)
@@ -184,7 +236,7 @@ CREATE TABLE IF NOT EXISTS checks (
 CREATE TABLE IF NOT EXISTS examine (
     doc_ID INT NOT NULL,
     pat_ID INT NOT NULL,
-    date DATE NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_examine_doc_ID
         FOREIGN KEY (doc_ID)
@@ -210,26 +262,26 @@ CREATE TABLE IF NOT EXISTS generate_results (
 
 CREATE TABLE IF NOT EXISTS makes_diagnosis (
     doc_ID INT NOT NULL,
-    result_ID INT NOT NULL ,
     diag_ID INT NOT NULL,
-    date DATE NOT NULL,
+	pat_ID INT NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_makes_diagnosis_doc_ID
         FOREIGN KEY (doc_ID)
             REFERENCES Doctors(doc_ID),
-    CONSTRAINT fk_makes_diagnosis_result_ID
-        FOREIGN KEY (result_ID)
-            REFERENCES Results(result_ID),
     CONSTRAINT fk_makes_diagnosis_diag_ID
         FOREIGN KEY (diag_ID)
-            REFERENCES Diagnosis(diag_ID)
+            REFERENCES Diagnosis(diag_ID),
+	CONSTRAINT fk_makes_diagnosis_pat_ID
+		FOREIGN KEY (pat_ID)
+		    REFERENCES Patients(pat_ID)
 );
 
 CREATE TABLE IF NOT EXISTS performs_procedure (
     doc_ID INT NOT NULL,
     pat_ID INT NOT NULL,
     proc_ID INT NOT NULL,
-    date DATE NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_performs_procedure_doc_ID
         FOREIGN KEY (doc_ID)
@@ -246,7 +298,7 @@ CREATE TABLE IF NOT EXISTS performs_test (
     doc_ID INT NOT NULL,
     pat_ID INT NOT NULL,
     test_ID INT NOT NULL,
-    date DATE NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_performs_test_doc_ID
         FOREIGN KEY (doc_ID)
@@ -259,43 +311,89 @@ CREATE TABLE IF NOT EXISTS performs_test (
             REFERENCES Tests(test_ID)
 );
 
+CREATE TABLE IF NOT EXISTS performs_treatment (
+    doc_ID INT NOT NULL,
+    pat_ID INT NOT NULL,
+    treat_ID INT NOT NULL,
+    dates DATE NOT NULL,
+
+    CONSTRAINT fk_performs_treatment_doc_ID
+        FOREIGN KEY (doc_ID)
+            REFERENCES Doctors(doc_ID),
+    CONSTRAINT fk_performs_treatment_pat_ID
+        FOREIGN KEY (pat_ID)
+            REFERENCES Patients(pat_ID),
+    CONSTRAINT fk_performs_treatment_treat_ID
+        FOREIGN KEY (treat_ID)
+            REFERENCES Treatments(treat_ID)
+);
+
 CREATE TABLE IF NOT EXISTS prescribe_medication (
     doc_ID INT NOT NULL,
     med_ID INT NOT NULL,
-    date DATE NOT NULL,
+	treat_ID INT NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_prescribe_medication_doc_ID
         FOREIGN KEY (doc_ID)
             REFERENCES Doctors(doc_ID),
     CONSTRAINT fk_prescribe_medication_med_ID
         FOREIGN KEY (med_ID)
-            REFERENCES Medication(med_ID)
+            REFERENCES Medication(med_ID),
+	CONSTRAINT fk_prescribe_medication_treat_ID
+		FOREIGN KEY (treat_ID)
+			REFERENCES Treatments(treat_ID)
 );
 
 CREATE TABLE IF NOT EXISTS recommends (
     doc_ID INT NOT NULL,
     treat_ID INT NOT NULL,
-    date DATE NOT NULL,
+	diag_ID INT NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_recommends_doc_ID
         FOREIGN KEY (doc_ID)
             REFERENCES Doctors(doc_ID),
     CONSTRAINT fk_recommends_treat_ID
         FOREIGN KEY (treat_ID)
-            REFERENCES Treatments(treat_ID)
+            REFERENCES Treatments(treat_ID),
+	CONSTRAINT fk_recommends_diag_ID
+		FOREIGN KEY (diag_ID)
+			REFERENCES Diagnosis(diag_ID)
+);
+
+CREATE TABLE IF NOT EXISTS registers (
+    sec_ID INT NOT NULL,
+    pat_ID INT NOT NULL,
+	fam_hist_ID INT NOT NULL,
+    dates DATE NOT NULL,
+
+    CONSTRAINT fk_registers_sec_ID
+        FOREIGN KEY (sec_ID)
+            REFERENCES Secretaries(sec_ID),
+	CONSTRAINT fk_registers_pat_ID
+        FOREIGN KEY (pat_ID)
+            REFERENCES Patients(pat_ID),
+    CONSTRAINT fk_registers_fam_hist_ID
+        FOREIGN KEY (fam_hist_ID)
+            REFERENCES FamilyHistory(fam_hist_ID)
 );
 
 CREATE TABLE IF NOT EXISTS treats (
     nurse_ID INT NOT NULL,
     pat_ID INT NOT NULL,
-    date DATE NOT NULL,
+	treat_ID INT NOT NULL,
+    dates DATE NOT NULL,
 
     CONSTRAINT fk_treats_nurse_ID
         FOREIGN KEY (nurse_ID)
             REFERENCES Nurses(nurse_ID),
     CONSTRAINT fk_treats_pat_ID
         FOREIGN KEY (pat_ID)
-            REFERENCES Patients(pat_ID)
+            REFERENCES Patients(pat_ID),
+	CONSTRAINT fk_treats_treat_ID
+		FOREIGN KEY (treat_ID)
+			REFERENCES Treatments(treat_ID)
 );
 
 
@@ -304,7 +402,7 @@ CREATE TABLE IF NOT EXISTS Consultant (
     doc_ID INT NOT NULL,
     specialization VARCHAR (100) NOT NULL,
 
-    CONSTRAINT fk_Consultant_doc_ID
+    CONSTRAINT fk_consultant_doc_ID
         FOREIGN KEY (doc_ID)
             REFERENCES Doctors(doc_ID)
 );
