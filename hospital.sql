@@ -431,42 +431,139 @@ CREATE TABLE IF NOT EXISTS Resident (
             REFERENCES Doctors(doc_ID)
 );
 
-#Queries
+CREATE PROCEDURE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
+	IN start_date DATE, 
+	IN end_date DATE, 
+	IN diagnosis VARCHAR(100))
+	
+	BEGIN
+        SELECT fname,lname FROM Patients 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_ID FROM makes_diagnosis 
+		
+		WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
+		
+	SELECT diag_ID FROM Diagnosis 
+		
+		WHERE name = diagnosis));
+    	END;
 
---(a) Enter a diagnosis and date range to get the names of all patients with a certain diagnosis between the specified date range.
-SELECT fname,lname FROM Patients WHERE pat_ID IN(
-SELECT pat_ID FROM makes_diagnosis WHERE dates BETWEEN "" AND "" AND diag_ID IN(
-SELECT diag_ID FROM Diagnosis WHERE name = ""));
 
---(b) Get all Allergies of a specific patient.
-SELECT name FROM OtherAllergies WHERE Allergy_ID IN(
-SELECT allergy_ID FROM afflicted_with WHERE pat_ID IN(
-SELECT pat_id FROM Patients WHERE fname = "" and lname = "")) UNION SELECT gen_name FROM Medication WHERE med_ID IN(
-SELECT med_ID FROM allergic_to WHERE pat_ID IN(
-SELECT pat_id FROM Patients WHERE fname = "" and lname = ""));
+CREATE PROCEDURE OR REPLACE PROCEDURE GetAllergyByPatient(
+	IN first_name VARCHAR(100), 
+	IN last_name VARCHAR(100))
+	
+	BEGIN
+        SELECT name FROM OtherAllergies 
+		
+		WHERE Allergy_ID IN(
+		
+	SELECT allergy_ID FROM afflicted_with 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_id FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name)) 
+		
+			UNION 
+		
+	SELECT gen_name FROM Medication 
+		
+		WHERE med_ID IN(
+		
+	SELECT med_ID FROM allergic_to 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_id FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name));
+    	END;
 
---(c) Get the medication that most patients are allergic to.
-SELECT gen_name FROM Medication WHERE med_ID IN(
-SELECT med_ID FROM allergic_to GROUP BY med_ID HAVING COUNT(pat_ID) >= ALL(
-SELECT COUNT(pat_ID) FROM allergic_to GROUP BY med_ID));
+	
+CREATE PROCEDURE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
+	
+	BEGIN
+        SELECT gen_name FROM Medication 
+		
+		WHERE med_ID IN(
+		
+	SELECT med_ID FROM allergic_to 
+			
+		GROUP BY med_ID HAVING COUNT(pat_ID) >= ALL(
+		
+	SELECT COUNT(pat_ID) FROM allergic_to GROUP BY med_ID));
+    	END;
 
---(d) Retrieve ALL test results which may include images/scans of a specific patient.
-SELECT test_result FROM Results WHERE result_ID IN(
-SELECT The.result_ID FROM generate_results AS The, attached_to as Atch WHERE The.result_ID  = Atch.result_ID  AND The.result_ID IN(
-SELECT result_ID FROM generate_results WHERE test_ID IN(
-SELECT test_ID FROM performs_test WHERE pat_ID IN(
-SELECT pat_ID FROM Patients WHERE fname = "" and lname = ""))));
 
---(e) List nurses who administered medication to a specific patient at a specified date.
-SELECT fname,lname FROM Nurses WHERE nurse_id IN(
-SELECT nurse_id FROM administers WHERE dates BETWEEN "" AND "" AND pat_ID IN(
-SELECT pat_ID FROM Patients WHERE fname = "" and lname = ""));
+CREATE PROCEDURE OR REPLACE PROCEDURE GetImgResultsByPatient(
+	IN first_name VARCHAR(100), 
+	IN last_name VARCHAR(100))
+	
+	BEGIN
+	SELECT test_result FROM Results 
+		
+		WHERE result_ID IN(
+		
+	SELECT The.result_ID FROM generate_results AS The, attached_to as Atch 
+		
+		WHERE The.result_ID  = Atch.result_ID  AND The.result_ID IN(
+		
+	SELECT result_ID FROM generate_results 
+		
+		WHERE test_ID IN(
+		
+	SELECT test_ID FROM performs_test 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_ID FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name))));
+    	END;
 
---(f) Find the interns who treated the most patients.
-SELECT fname,lname FROM Doctors WHERE doc_ID IN(
-SELECT Newb.doc_ID FROM Intern AS Newb, performs_treatment AS Help WHERE Newb.doc_ID = Help.doc_ID AND Help.doc_ID IN( 
-SELECT doc_ID FROM performs_treatment GROUP BY doc_ID HAVING COUNT(pat_ID) >= ALL(
-SELECT COUNT(pat_ID) FROM performs_treatment GROUP BY doc_ID)));
+
+CREATE PROCEDURE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
+	IN start_date DATE, 
+	IN end_date DATE,
+	IN first_name VARCHAR(100), 
+	IN last_name VARCHAR(100))
+	
+	BEGIN
+        SELECT fname,lname FROM Nurses 
+		
+		WHERE nurse_id IN(
+		
+	SELECT nurse_id FROM administers 
+		
+		WHERE dates BETWEEN start_date AND end_date AND pat_ID IN(
+		
+	SELECT pat_ID FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name));
+    	END;
+
+
+CREATE PROCEDURE OR REPLACE PROCEDURE GetInternsByMostPatient()
+	
+	BEGIN
+        SELECT fname,lname FROM Doctors 
+		
+		WHERE doc_ID IN(
+		
+	SELECT Newb.doc_ID FROM Intern AS Newb, performs_treatment AS Help 
+		
+		WHERE Newb.doc_ID = Help.doc_ID AND Help.doc_ID IN( 
+		
+	SELECT doc_ID FROM performs_treatment 
+			
+		GROUP BY doc_ID HAVING COUNT(pat_ID) >= ALL(
+		
+	SELECT COUNT(pat_ID) FROM performs_treatment GROUP BY doc_ID)));
+    	END;
 
 # Store Procedures
 
