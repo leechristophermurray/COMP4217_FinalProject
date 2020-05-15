@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS Nurses (
 
 CREATE TABLE IF NOT EXISTS Patients (
     pat_ID INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR (100) NOT NULL,
+    fname VARCHAR (100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
     dob DATE NOT NULL,
     address VARCHAR (500) NOT NULL,
@@ -436,8 +436,16 @@ CREATE OR REPLACE PROCEDURE sp_get_doctors()
         FROM Doctors;
     END;
 
-
 # CALL sp_get_doctors();
+
+CREATE OR REPLACE PROCEDURE sp_get_nurses()
+    BEGIN
+        SELECT
+            name                                               # tuple[0]
+            ,lname                                              # tuple[1]
+        FROM Nurses;
+    END;
+# CALL sp_get_nurses();
 
 CREATE OR REPLACE PROCEDURE sp_get_currentuser()
     BEGIN
@@ -447,7 +455,57 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser()
 
  # CALL sp_get_currentuser();
 
+CREATE OR REPLACE PROCEDURE
+    get_patients_by_allergens(
+)
+    BEGIN
+        SELECT a.name  AS Allergen,
+               p.fname  AS FirstName,
+               p.lname AS LastName
+        FROM patients AS p
+                 JOIN afflicted_with aw on p.pat_ID = aw.pat_ID
+                 JOIN otherallergies as a on a.allergy_ID = aw.allergy_ID
 
+        UNION
+
+        SELECT m.gen_name AS Allergen,
+               p.fname     AS FirstName,
+               p.lname    AS LastName
+        FROM patients AS p
+                 JOIN allergic_to at on p.pat_ID = at.pat_ID
+                 JOIN medication as m on m.med_ID = at.med_ID;
+    END;
+
+# CALL get_patients_by_allergens();
+
+
+
+#
+
+CREATE OR REPLACE PROCEDURE
+    sp_add_patient(
+    fname VARCHAR(100),
+    lname VARCHAR (100),
+    dob DATE,
+    address VARCHAR (500),
+    phone INT(11)
+)
+    BEGIN
+
+        IF (SELECT NOT EXISTS(SELECT 1
+                                FROM hospital.patients AS p
+                                WHERE p.fname = fname
+                                AND p.lname = lname
+                                AND p.dob = dob
+                                AND p.address = address
+                                AND p.phone = phone)) THEN
+
+            INSERT INTO Secretaries VALUES (NULL, fname, lname, dob, address, phone);
+
+        END IF;
+    END;
+
+CALL sp_add_patient('Bill', 'Willy', '1990-04-01', '2 Will Way', 8349602);
 
 #
 
@@ -475,6 +533,16 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_nurses TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_add_patient TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
             SET @sql = CONCAT('GRANT Secretary TO \'',@username,'\'@\'%\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
@@ -489,7 +557,7 @@ CREATE OR REPLACE PROCEDURE
         END IF;
     END;
 
-# CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
+ CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
 
 CREATE OR REPLACE PROCEDURE
     sp_add_nurse(
@@ -515,6 +583,16 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_patients_by_allergens TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_add_patient TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
             SET @sql = CONCAT('GRANT Nurse TO \'',@username,'\'@\'%\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
@@ -529,11 +607,64 @@ CREATE OR REPLACE PROCEDURE
         END IF;
     END;
 
-# CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
+ CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
 
 
 
-CALL sp_get_doctors();
+#
+
+CREATE OR REPLACE PROCEDURE
+    sp_add_doctor(
+    fname VARCHAR(100),
+    lname VARCHAR (100),
+    dob DATE,
+    address VARCHAR (500),
+    phone INT(11)
+)
+    BEGIN
+        SET @username = CONCAT(fname,lname);
+        SET @password = CONCAT(fname,lname);
+
+        IF (SELECT NOT EXISTS(SELECT 1 FROM mysql.user WHERE user = @username)) THEN
+
+            SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_doctors TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_nurses TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_patients_by_allergens TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT Doctor TO \'',@username,'\'@\'%\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT AppUser TO \'',@username,'\'@\'%\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            INSERT INTO Doctors VALUES (NULL, fname, lname, dob, address, phone);
+        END IF;
+    END;
+
+ CALL sp_add_doctor('Jeff', 'Rights', '1990-12-11', '345 Wilbo Avenue', 3472893);
+ CALL sp_add_doctor('Timmy', 'Tuner', '1999-01-01', '345 Burner Way', 3472893);
+
+
 
 # Roles
 

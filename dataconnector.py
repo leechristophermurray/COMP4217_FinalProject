@@ -43,6 +43,24 @@ class Connection:
         finally:
             return data
 
+    def get_nurses(self):
+        data = ()
+
+        try:
+
+            # prepare a cursor object using cursor() method
+            with self.CON.cursor() as cursor:
+
+                # execute SQL query using execute() method.
+                cursor.execute("CALL sp_get_nurses();")
+
+                # Fetch all the tuples in a list of lists.
+                data = cursor.fetchall()
+                return data
+
+        finally:
+            return data
+
     def login(self):
 
         data = ()

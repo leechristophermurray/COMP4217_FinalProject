@@ -46,4 +46,9 @@ def utility_processor():
             doctors = con.get_doctors()
         return doctors
 
-    return {'get_doctors': get_doctors}
+    def get_nurses():
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+            nurses = con.get_nurses()
+        return nurses
+
+    return {'get_doctors': get_doctors, 'get_nurses': get_nurses}

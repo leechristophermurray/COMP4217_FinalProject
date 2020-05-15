@@ -1,0 +1,29 @@
+
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h4 class="card-title">All Nurses</h4>
+                                <p class="card-category"><b>NOTICE:</b> Nurses' availability is limited due to the COVID-19 pandemic.</p>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="text-warning">
+                                        <th>Last Name</th>
+                                        <th>First Name</th>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for nurse in get_nurses()  %}
+                                            <tr>
+                                                <td><b>{{ nurse[1] }}</b></td>
+                                                <td>{{ nurse[0] }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+                                {% if error %}
+                                    <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
