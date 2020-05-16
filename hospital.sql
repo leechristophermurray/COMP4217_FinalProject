@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Doctors(
 
 CREATE TABLE IF NOT EXISTS Nurses (
     nurse_ID INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR (100) NOT NULL,
+    fname VARCHAR (100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
     dob DATE NOT NULL,
     address VARCHAR (500) NOT NULL,
@@ -441,19 +441,42 @@ CREATE OR REPLACE PROCEDURE sp_get_doctors()
 CREATE OR REPLACE PROCEDURE sp_get_nurses()
     BEGIN
         SELECT
-            name                                               # tuple[0]
+            fname                                               # tuple[0]
             ,lname                                              # tuple[1]
         FROM Nurses;
     END;
 # CALL sp_get_nurses();
 
-CREATE OR REPLACE PROCEDURE sp_get_currentuser()
+CREATE OR REPLACE PROCEDURE sp_get_currentuser(
+    username VARCHAR(100)
+)
     BEGIN
-        SELECT SESSION_USER();
+        SELECT * FROM
+            (SELECT
+               CONCAT(fname,lname) AS usr,
+               fname,
+               lname,
+               'Doctor' AS role
+            FROM doctors
+            UNION
+            SELECT
+               CONCAT(fname,lname) AS usr,
+                   fname,
+                   lname,
+                   'Nurse' AS role
+            FROM nurses
+            UNION
+            SELECT
+               CONCAT(fname,lname) AS usr,
+                   fname,
+                   lname,
+                   'Secretary' AS role
+            FROM secretaries) AS usrs
+        WHERE LOCATE(usrs.usr,username) != 0;
     END;
 
 
- # CALL sp_get_currentuser();
+# CALL sp_get_currentuser('CarlaDavis');
 
 CREATE OR REPLACE PROCEDURE
     get_patients_by_allergens(
@@ -474,6 +497,21 @@ CREATE OR REPLACE PROCEDURE
         FROM patients AS p
                  JOIN allergic_to at on p.pat_ID = at.pat_ID
                  JOIN medication as m on m.med_ID = at.med_ID;
+    END;
+
+# CALL get_patients_by_allergens();
+
+CREATE OR REPLACE PROCEDURE
+    get_patients(
+)
+    BEGIN
+        SELECT
+               fname,
+               lname,
+               dob,
+               address,
+               phone
+        FROM Patients
     END;
 
 # CALL get_patients_by_allergens();
@@ -500,12 +538,11 @@ CREATE OR REPLACE PROCEDURE
                                 AND p.address = address
                                 AND p.phone = phone)) THEN
 
-            INSERT INTO Secretaries VALUES (NULL, fname, lname, dob, address, phone);
+            INSERT INTO Patients VALUES (NULL, fname, lname, dob, address, phone);
 
         END IF;
     END;
 
-CALL sp_add_patient('Bill', 'Willy', '1990-04-01', '2 Will Way', 8349602);
 
 #
 
@@ -524,6 +561,11 @@ CREATE OR REPLACE PROCEDURE
         IF (SELECT NOT EXISTS(SELECT 1 FROM mysql.user WHERE user = @username)) THEN
 
             SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_currentuser TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
@@ -557,7 +599,6 @@ CREATE OR REPLACE PROCEDURE
         END IF;
     END;
 
- CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
 
 CREATE OR REPLACE PROCEDURE
     sp_add_nurse(
@@ -574,6 +615,11 @@ CREATE OR REPLACE PROCEDURE
 
         IF (SELECT NOT EXISTS(SELECT 1 FROM mysql.user WHERE user = @username)) THEN
             SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_currentuser TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
@@ -607,7 +653,6 @@ CREATE OR REPLACE PROCEDURE
         END IF;
     END;
 
- CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
 
 
 
@@ -628,6 +673,11 @@ CREATE OR REPLACE PROCEDURE
         IF (SELECT NOT EXISTS(SELECT 1 FROM mysql.user WHERE user = @username)) THEN
 
             SET @sql = CONCAT('GRANT USAGE,SELECT ON HOSPITAL.* to \'',@username,'\'@\'%\' IDENTIFIED BY \'',@password,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE sp_get_currentuser TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
@@ -661,8 +711,6 @@ CREATE OR REPLACE PROCEDURE
         END IF;
     END;
 
- CALL sp_add_doctor('Jeff', 'Rights', '1990-12-11', '345 Wilbo Avenue', 3472893);
- CALL sp_add_doctor('Timmy', 'Tuner', '1999-01-01', '345 Burner Way', 3472893);
 
 
 
@@ -671,9 +719,9 @@ CREATE OR REPLACE PROCEDURE
 CREATE OR REPLACE ROLE Secretary;
 GRANT SELECT,INSERT,UPDATE ON patients.* TO Secretary;
 GRANT USAGE, SELECT ON doctors.* TO Secretary;
+GRANT USAGE, SELECT ON nurses.* TO Secretary;
 GRANT EXECUTE ON hospital.* TO Secretary;
 GRANT SELECT, USAGE ON mysql.proc TO Secretary;
-GRANT EXECUTE ON PROCEDURE sp_get_doctors TO Secretary;
 
 CREATE OR REPLACE ROLE Nurse;
 GRANT SELECT,INSERT,UPDATE ON accesses.* TO Nurse;
@@ -695,4 +743,10 @@ CREATE OR REPLACE ROLE AppUser;
 GRANT USAGE, SELECT ON HOSPITAL.* TO AppUser;
 GRANT SELECT ON mysql.global_priv TO AppUser;
 
-
+# Add Users
+#
+## CALL sp_add_patient('Bill', 'Willy', '1990-04-01', '2 Will Way', 8349602);
+#  CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
+#  CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
+#  CALL sp_add_doctor('Jeff', 'Rights', '1990-12-11', '345 Wilbo Avenue', 3472893);
+#  CALL sp_add_doctor('Timmy', 'Tuner', '1999-01-01', '345 Burner Way', 3472893);

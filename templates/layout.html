@@ -14,6 +14,9 @@
       <!--     Fonts and icons     -->
       <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ url_for('static', filename='css/bootstrap-datepicker.css.map') }}" rel="stylesheet" media="screen">
+    <link href="{{ url_for('static', filename='css/bootstrap-datepicker.standalone.css') }}" rel="stylesheet" media="screen">
     <link href="{{ url_for('static', filename='css/material-dashboard.css') }}" rel="stylesheet" media="screen">
       <!-- CSS Just for demo purpose, don't include it in your project -->
       <link href="{{ url_for('static', filename='demo/demo.css') }}" rel="stylesheet" />
@@ -23,11 +26,9 @@
     <div class="wrapper ">
         <div class="main-panel">
 {#            {% include 'sidebar.html' %}#}
-            {% include 'navigation.html' %}
             {% block content %}{% endblock %}
         </div>
     </div>
-  {% include 'fixedplugin.html' %}
   {% include 'corejs.html' %}
   </body>
 

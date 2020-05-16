@@ -2,8 +2,8 @@
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id="navigation-example">
         <div class="container-fluid">
           <div class="navbar-wrapper">
-                {% if usr | length > 0 %}
-                        <span>Welcome <b>{{ usr }}</b></span>
+                {% if get_role() | length > 0 %}
+                        <span>Welcome <b>{{ get_role()[1] }} {{ get_role()[2] }}</b></span>
                 {% endif %}
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation" data-target="#navigation-example">

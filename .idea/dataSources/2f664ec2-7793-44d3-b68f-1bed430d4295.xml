@@ -1027,971 +1027,1287 @@
     </user>
     <table id="328" parent="2" name="accesses"/>
     <table id="329" parent="2" name="administers"/>
-    <table id="330" parent="2" name="associated_with"/>
-    <table id="331" parent="2" name="belongs_to"/>
-    <table id="332" parent="2" name="checks"/>
-    <table id="333" parent="2" name="consultant"/>
-    <table id="334" parent="2" name="diagnosis"/>
-    <table id="335" parent="2" name="doctors"/>
-    <table id="336" parent="2" name="examine"/>
-    <table id="337" parent="2" name="familyhistory"/>
-    <table id="338" parent="2" name="generate_results"/>
-    <table id="339" parent="2" name="intern"/>
-    <table id="340" parent="2" name="makes_diagnosis"/>
-    <table id="341" parent="2" name="medication"/>
-    <table id="342" parent="2" name="nurses"/>
-    <table id="343" parent="2" name="patients"/>
-    <table id="344" parent="2" name="performs_procedure"/>
-    <table id="345" parent="2" name="performs_test"/>
-    <table id="346" parent="2" name="prescribe_medication"/>
-    <table id="347" parent="2" name="procedures"/>
-    <table id="348" parent="2" name="recommends"/>
-    <table id="349" parent="2" name="resident"/>
-    <table id="350" parent="2" name="results"/>
-    <table id="351" parent="2" name="secretaries"/>
-    <table id="352" parent="2" name="tests"/>
-    <table id="353" parent="2" name="treatments"/>
-    <table id="354" parent="2" name="treats"/>
-    <table id="355" parent="2" name="vitalsigns"/>
-    <column id="356" parent="328" name="nurse_ID">
+    <table id="330" parent="2" name="afflicted_with"/>
+    <table id="331" parent="2" name="allergic_to"/>
+    <table id="332" parent="2" name="associated_with"/>
+    <table id="333" parent="2" name="attached_to"/>
+    <table id="334" parent="2" name="belongs_to"/>
+    <table id="335" parent="2" name="checks"/>
+    <table id="336" parent="2" name="consultant"/>
+    <table id="337" parent="2" name="diagnosis"/>
+    <table id="338" parent="2" name="doctors"/>
+    <table id="339" parent="2" name="examine"/>
+    <table id="340" parent="2" name="familyhistory"/>
+    <table id="341" parent="2" name="generate_results"/>
+    <table id="342" parent="2" name="intern"/>
+    <table id="343" parent="2" name="makes_diagnosis"/>
+    <table id="344" parent="2" name="medication"/>
+    <table id="345" parent="2" name="nurses"/>
+    <table id="346" parent="2" name="otherallergies"/>
+    <table id="347" parent="2" name="patients"/>
+    <table id="348" parent="2" name="performs_procedure"/>
+    <table id="349" parent="2" name="performs_test"/>
+    <table id="350" parent="2" name="performs_treatment"/>
+    <table id="351" parent="2" name="prescribe_medication"/>
+    <table id="352" parent="2" name="procedures"/>
+    <table id="353" parent="2" name="recommends"/>
+    <table id="354" parent="2" name="registers"/>
+    <table id="355" parent="2" name="resident"/>
+    <table id="356" parent="2" name="results"/>
+    <table id="357" parent="2" name="scnimg"/>
+    <table id="358" parent="2" name="secretaries"/>
+    <table id="359" parent="2" name="tests"/>
+    <table id="360" parent="2" name="treatments"/>
+    <table id="361" parent="2" name="treats"/>
+    <table id="362" parent="2" name="vitalsigns"/>
+    <routine id="363" parent="2" name="sp_add_patient">
+      <Definer>root@localhost</Definer>
+      <RoutineKind>procedure</RoutineKind>
+    </routine>
+    <routine id="364" parent="2" name="sp_get_currentuser">
+      <Definer>root@localhost</Definer>
+      <RoutineKind>procedure</RoutineKind>
+    </routine>
+    <routine id="365" parent="2" name="sp_get_doctors">
+      <Definer>root@localhost</Definer>
+      <RoutineKind>procedure</RoutineKind>
+    </routine>
+    <routine id="366" parent="2" name="sp_get_nurses">
+      <Definer>root@localhost</Definer>
+      <RoutineKind>procedure</RoutineKind>
+    </routine>
+    <column id="367" parent="328" name="nurse_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="357" parent="328" name="treat_ID">
+    <column id="368" parent="328" name="treat_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="358" parent="328" name="date">
+    <column id="369" parent="328" name="dates">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="359" parent="328" name="dosage">
+    <column id="370" parent="328" name="dosage">
       <Position>4</Position>
       <DataType>varchar(20)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="360" parent="328" name="dosage_intervals">
+    <column id="371" parent="328" name="dosage_intervals">
       <Position>5</Position>
       <DataType>varchar(20)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="361" parent="328" name="PRIMARY">
+    <key id="372" parent="328" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>nurse_ID
 treat_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="362" parent="328" name="fk_accesses">
+    <foreign-key id="373" parent="328" name="fk_accesses">
       <ColNames>nurse_ID</ColNames>
       <RefTableName>nurses</RefTableName>
       <RefColNames>nurse_ID</RefColNames>
     </foreign-key>
-    <column id="363" parent="329" name="nurse_ID">
+    <column id="374" parent="329" name="nurse_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="364" parent="329" name="med_ID">
+    <column id="375" parent="329" name="med_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="365" parent="329" name="date">
+    <column id="376" parent="329" name="dates">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="366" parent="329" name="dosage">
+    <column id="377" parent="329" name="dosage">
       <Position>4</Position>
       <DataType>varchar(20)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="367" parent="329" name="dosage_intervals">
+    <column id="378" parent="329" name="dosage_intervals">
       <Position>5</Position>
       <DataType>varchar(20)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="368" parent="329" name="PRIMARY">
+    <key id="379" parent="329" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>nurse_ID
 med_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="369" parent="329" name="fk_administers">
+    <foreign-key id="380" parent="329" name="fk_administers">
       <ColNames>nurse_ID</ColNames>
       <RefTableName>nurses</RefTableName>
       <RefColNames>nurse_ID</RefColNames>
     </foreign-key>
-    <column id="370" parent="330" name="pat_ID">
+    <column id="381" parent="330" name="pat_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="371" parent="330" name="fam_hist_ID">
+    <column id="382" parent="330" name="allergy_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="372" parent="330" name="fk_associated_with_pat_ID">
+    <index id="383" parent="330" name="fk_afflicted_with_pat_ID">
       <ColNames>pat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="373" parent="330" name="fk_associated_with_fam_hist_ID">
-      <ColNames>fam_hist_ID</ColNames>
+    <index id="384" parent="330" name="fk_afflicted_with_allergy_ID">
+      <ColNames>allergy_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="374" parent="330" name="fk_associated_with_pat_ID">
+    <foreign-key id="385" parent="330" name="fk_afflicted_with_pat_ID">
       <ColNames>pat_ID</ColNames>
       <RefTableName>patients</RefTableName>
       <RefColNames>pat_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="375" parent="330" name="fk_associated_with_fam_hist_ID">
+    <foreign-key id="386" parent="330" name="fk_afflicted_with_allergy_ID">
+      <ColNames>allergy_ID</ColNames>
+      <RefTableName>otherallergies</RefTableName>
+      <RefColNames>allergy_ID</RefColNames>
+    </foreign-key>
+    <column id="387" parent="331" name="pat_ID">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="388" parent="331" name="med_ID">
+      <Position>2</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="389" parent="331" name="fk_allergic_to_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="390" parent="331" name="fk_allergic_to_med_ID">
+      <ColNames>med_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="391" parent="331" name="fk_allergic_to_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <RefTableName>patients</RefTableName>
+      <RefColNames>pat_ID</RefColNames>
+    </foreign-key>
+    <foreign-key id="392" parent="331" name="fk_allergic_to_med_ID">
+      <ColNames>med_ID</ColNames>
+      <RefTableName>medication</RefTableName>
+      <RefColNames>med_ID</RefColNames>
+    </foreign-key>
+    <column id="393" parent="332" name="pat_ID">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="394" parent="332" name="fam_hist_ID">
+      <Position>2</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="395" parent="332" name="fk_associated_with_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="396" parent="332" name="fk_associated_with_fam_hist_ID">
+      <ColNames>fam_hist_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="397" parent="332" name="fk_associated_with_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <RefTableName>patients</RefTableName>
+      <RefColNames>pat_ID</RefColNames>
+    </foreign-key>
+    <foreign-key id="398" parent="332" name="fk_associated_with_fam_hist_ID">
       <ColNames>fam_hist_ID</ColNames>
       <RefTableName>familyhistory</RefTableName>
       <RefColNames>fam_hist_ID</RefColNames>
     </foreign-key>
-    <column id="376" parent="331" name="pat_ID">
+    <column id="399" parent="333" name="result_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="377" parent="331" name="vitals_ID">
+    <column id="400" parent="333" name="scn_img_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="378" parent="331" name="fk_belongs_to">
+    <index id="401" parent="333" name="fk_attached_to_pat_ID">
+      <ColNames>result_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="402" parent="333" name="fk_attached_to_scn_img_ID">
+      <ColNames>scn_img_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="403" parent="333" name="fk_attached_to_pat_ID">
+      <ColNames>result_ID</ColNames>
+      <RefTableName>results</RefTableName>
+      <RefColNames>result_ID</RefColNames>
+    </foreign-key>
+    <foreign-key id="404" parent="333" name="fk_attached_to_scn_img_ID">
+      <ColNames>scn_img_ID</ColNames>
+      <RefTableName>scnimg</RefTableName>
+      <RefColNames>scn_img_ID</RefColNames>
+    </foreign-key>
+    <column id="405" parent="334" name="pat_ID">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="406" parent="334" name="vitals_ID">
+      <Position>2</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="407" parent="334" name="fk_belongs_to_pat_ID">
       <ColNames>pat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="379" parent="331" name="fk_belongs_to_vitals_ID">
+    <index id="408" parent="334" name="fk_belongs_to_vitals_ID">
       <ColNames>vitals_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="380" parent="331" name="fk_belongs_to">
+    <foreign-key id="409" parent="334" name="fk_belongs_to_pat_ID">
       <ColNames>pat_ID</ColNames>
       <RefTableName>patients</RefTableName>
       <RefColNames>pat_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="381" parent="331" name="fk_belongs_to_vitals_ID">
+    <foreign-key id="410" parent="334" name="fk_belongs_to_vitals_ID">
       <ColNames>vitals_ID</ColNames>
       <RefTableName>vitalsigns</RefTableName>
       <RefColNames>vitals_ID</RefColNames>
     </foreign-key>
-    <column id="382" parent="332" name="nurse_ID">
+    <column id="411" parent="335" name="nurse_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="383" parent="332" name="vitals_ID">
+    <column id="412" parent="335" name="vitals_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="384" parent="332" name="date">
+    <column id="413" parent="335" name="dates">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="385" parent="332" name="fk_checks_nurse_ID">
+    <index id="414" parent="335" name="fk_checks_nurse_ID">
       <ColNames>nurse_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="386" parent="332" name="fk_checks_vitals_ID">
+    <index id="415" parent="335" name="fk_checks_vitals_ID">
       <ColNames>vitals_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="387" parent="332" name="fk_checks_nurse_ID">
+    <foreign-key id="416" parent="335" name="fk_checks_nurse_ID">
       <ColNames>nurse_ID</ColNames>
       <RefTableName>nurses</RefTableName>
       <RefColNames>nurse_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="388" parent="332" name="fk_checks_vitals_ID">
+    <foreign-key id="417" parent="335" name="fk_checks_vitals_ID">
       <ColNames>vitals_ID</ColNames>
       <RefTableName>vitalsigns</RefTableName>
       <RefColNames>vitals_ID</RefColNames>
     </foreign-key>
-    <column id="389" parent="333" name="doc_ID">
+    <column id="418" parent="336" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="390" parent="333" name="specialization">
+    <column id="419" parent="336" name="specialization">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="391" parent="333" name="fk_Consultant_doc_ID">
+    <index id="420" parent="336" name="fk_consultant_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="392" parent="333" name="fk_Consultant_doc_ID">
+    <foreign-key id="421" parent="336" name="fk_consultant_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <column id="393" parent="334" name="diag_ID">
+    <column id="422" parent="337" name="diag_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="394" parent="334" name="icd_ID">
+    <column id="423" parent="337" name="icd_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="395" parent="334" name="icd_description">
+    <column id="424" parent="337" name="icd_description">
       <Position>3</Position>
       <DataType>varchar(1000)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="396" parent="334" name="name">
+    <column id="425" parent="337" name="name">
       <Position>4</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="397" parent="334" name="specifics_details">
+    <column id="426" parent="337" name="specifics_details">
       <Position>5</Position>
       <DataType>varchar(500)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="398" parent="334" name="PRIMARY">
+    <key id="427" parent="337" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>diag_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="399" parent="335" name="doc_ID">
+    <column id="428" parent="338" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="400" parent="335" name="fname">
+    <column id="429" parent="338" name="fname">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="401" parent="335" name="lname">
+    <column id="430" parent="338" name="lname">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="402" parent="335" name="dob">
+    <column id="431" parent="338" name="dob">
       <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="403" parent="335" name="address">
+    <column id="432" parent="338" name="address">
       <Position>5</Position>
       <DataType>varchar(500)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="404" parent="335" name="phone">
+    <column id="433" parent="338" name="phone">
       <Position>6</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="405" parent="335" name="PRIMARY">
+    <key id="434" parent="338" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>doc_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="406" parent="336" name="doc_ID">
+    <column id="435" parent="339" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="407" parent="336" name="pat_ID">
+    <column id="436" parent="339" name="pat_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="408" parent="336" name="date">
+    <column id="437" parent="339" name="dates">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="409" parent="336" name="fk_examine_doc_ID">
+    <index id="438" parent="339" name="fk_examine_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="410" parent="336" name="fk_examine_pat_ID">
+    <index id="439" parent="339" name="fk_examine_pat_ID">
       <ColNames>pat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="411" parent="336" name="fk_examine_doc_ID">
+    <foreign-key id="440" parent="339" name="fk_examine_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="412" parent="336" name="fk_examine_pat_ID">
+    <foreign-key id="441" parent="339" name="fk_examine_pat_ID">
       <ColNames>pat_ID</ColNames>
       <RefTableName>patients</RefTableName>
       <RefColNames>pat_ID</RefColNames>
     </foreign-key>
-    <column id="413" parent="337" name="fam_hist_ID">
+    <column id="442" parent="340" name="fam_hist_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="414" parent="337" name="fam_ID">
+    <column id="443" parent="340" name="fam_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="415" parent="337" name="diagnosis">
+    <column id="444" parent="340" name="diagnosis">
       <Position>3</Position>
       <DataType>varchar(500)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="416" parent="337" name="PRIMARY">
+    <key id="445" parent="340" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>fam_hist_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="417" parent="338" name="test_ID">
+    <column id="446" parent="341" name="test_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="418" parent="338" name="result_ID">
+    <column id="447" parent="341" name="result_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="419" parent="338" name="fk_generate_results_result_ID">
+    <index id="448" parent="341" name="fk_generate_results_result_ID">
       <ColNames>result_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="420" parent="338" name="PRIMARY">
+    <key id="449" parent="341" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>test_ID
 result_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="421" parent="338" name="fk_generate_results_test_ID">
+    <foreign-key id="450" parent="341" name="fk_generate_results_test_ID">
       <ColNames>test_ID</ColNames>
       <RefTableName>tests</RefTableName>
       <RefColNames>test_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="422" parent="338" name="fk_generate_results_result_ID">
+    <foreign-key id="451" parent="341" name="fk_generate_results_result_ID">
       <ColNames>result_ID</ColNames>
       <RefTableName>results</RefTableName>
       <RefColNames>result_ID</RefColNames>
     </foreign-key>
-    <column id="423" parent="339" name="doc_ID">
+    <column id="452" parent="342" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="424" parent="339" name="fk_intern_doc_ID">
+    <index id="453" parent="342" name="fk_intern_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="425" parent="339" name="fk_intern_doc_ID">
+    <foreign-key id="454" parent="342" name="fk_intern_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <column id="426" parent="340" name="doc_ID">
+    <column id="455" parent="343" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="427" parent="340" name="result_ID">
+    <column id="456" parent="343" name="diag_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="428" parent="340" name="diag_ID">
+    <column id="457" parent="343" name="pat_ID">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="429" parent="340" name="date">
+    <column id="458" parent="343" name="dates">
       <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="430" parent="340" name="fk_makes_diagnosis_doc_ID">
+    <index id="459" parent="343" name="fk_makes_diagnosis_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="431" parent="340" name="fk_makes_diagnosis_result_ID">
-      <ColNames>result_ID</ColNames>
-      <Type>btree</Type>
-    </index>
-    <index id="432" parent="340" name="fk_makes_diagnosis_diag_ID">
+    <index id="460" parent="343" name="fk_makes_diagnosis_diag_ID">
       <ColNames>diag_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="433" parent="340" name="fk_makes_diagnosis_doc_ID">
+    <index id="461" parent="343" name="fk_makes_diagnosis_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="462" parent="343" name="fk_makes_diagnosis_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="434" parent="340" name="fk_makes_diagnosis_result_ID">
-      <ColNames>result_ID</ColNames>
-      <RefTableName>results</RefTableName>
-      <RefColNames>result_ID</RefColNames>
-    </foreign-key>
-    <foreign-key id="435" parent="340" name="fk_makes_diagnosis_diag_ID">
+    <foreign-key id="463" parent="343" name="fk_makes_diagnosis_diag_ID">
       <ColNames>diag_ID</ColNames>
       <RefTableName>diagnosis</RefTableName>
       <RefColNames>diag_ID</RefColNames>
     </foreign-key>
-    <column id="436" parent="341" name="med_ID">
+    <foreign-key id="464" parent="343" name="fk_makes_diagnosis_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <RefTableName>patients</RefTableName>
+      <RefColNames>pat_ID</RefColNames>
+    </foreign-key>
+    <column id="465" parent="344" name="med_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="437" parent="341" name="gen_name">
+    <column id="466" parent="344" name="gen_name">
       <Position>2</Position>
       <DataType>varchar(200)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="438" parent="341" name="other_name">
+    <column id="467" parent="344" name="other_name">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="439" parent="341" name="PRIMARY">
+    <key id="468" parent="344" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>med_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="440" parent="342" name="nurse_ID">
+    <column id="469" parent="345" name="nurse_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="441" parent="342" name="name">
+    <column id="470" parent="345" name="fname">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="442" parent="342" name="lname">
+    <column id="471" parent="345" name="lname">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="443" parent="342" name="dob">
+    <column id="472" parent="345" name="dob">
       <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="444" parent="342" name="address">
+    <column id="473" parent="345" name="address">
       <Position>5</Position>
       <DataType>varchar(500)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="445" parent="342" name="phone">
+    <column id="474" parent="345" name="phone">
       <Position>6</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="446" parent="342" name="category">
+    <column id="475" parent="345" name="category">
       <Position>7</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="447" parent="342" name="PRIMARY">
+    <key id="476" parent="345" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>nurse_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="448" parent="343" name="pat_ID">
+    <column id="477" parent="346" name="allergy_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="449" parent="343" name="name">
+    <column id="478" parent="346" name="name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="450" parent="343" name="lname">
+    <key id="479" parent="346" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>allergy_ID</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="480" parent="347" name="pat_ID">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="481" parent="347" name="fname">
+      <Position>2</Position>
+      <DataType>varchar(100)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="482" parent="347" name="lname">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="451" parent="343" name="dob">
+    <column id="483" parent="347" name="dob">
       <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="452" parent="343" name="address">
+    <column id="484" parent="347" name="address">
       <Position>5</Position>
       <DataType>varchar(500)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="453" parent="343" name="phone">
+    <column id="485" parent="347" name="phone">
       <Position>6</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="454" parent="343" name="PRIMARY">
+    <key id="486" parent="347" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>pat_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="455" parent="344" name="doc_ID">
+    <column id="487" parent="348" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="456" parent="344" name="pat_ID">
+    <column id="488" parent="348" name="pat_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="457" parent="344" name="proc_ID">
+    <column id="489" parent="348" name="proc_ID">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="458" parent="344" name="date">
+    <column id="490" parent="348" name="dates">
       <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="459" parent="344" name="fk_performs_procedure_doc_ID">
+    <index id="491" parent="348" name="fk_performs_procedure_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="460" parent="344" name="fk_performs_procedure_pat_ID">
+    <index id="492" parent="348" name="fk_performs_procedure_pat_ID">
       <ColNames>pat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="461" parent="344" name="fk_performs_procedure_proc_ID">
+    <index id="493" parent="348" name="fk_performs_procedure_proc_ID">
       <ColNames>proc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="462" parent="344" name="fk_performs_procedure_doc_ID">
+    <foreign-key id="494" parent="348" name="fk_performs_procedure_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="463" parent="344" name="fk_performs_procedure_pat_ID">
+    <foreign-key id="495" parent="348" name="fk_performs_procedure_pat_ID">
       <ColNames>pat_ID</ColNames>
       <RefTableName>patients</RefTableName>
       <RefColNames>pat_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="464" parent="344" name="fk_performs_procedure_proc_ID">
+    <foreign-key id="496" parent="348" name="fk_performs_procedure_proc_ID">
       <ColNames>proc_ID</ColNames>
       <RefTableName>procedures</RefTableName>
       <RefColNames>proc_ID</RefColNames>
     </foreign-key>
-    <column id="465" parent="345" name="doc_ID">
+    <column id="497" parent="349" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="466" parent="345" name="pat_ID">
+    <column id="498" parent="349" name="pat_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="467" parent="345" name="test_ID">
+    <column id="499" parent="349" name="test_ID">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="468" parent="345" name="date">
+    <column id="500" parent="349" name="dates">
       <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="469" parent="345" name="fk_performs_test_doc_ID">
+    <index id="501" parent="349" name="fk_performs_test_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="470" parent="345" name="fk_performs_test_pat_ID">
+    <index id="502" parent="349" name="fk_performs_test_pat_ID">
       <ColNames>pat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="471" parent="345" name="fk_performs_test_test_ID">
+    <index id="503" parent="349" name="fk_performs_test_test_ID">
       <ColNames>test_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="472" parent="345" name="fk_performs_test_doc_ID">
+    <foreign-key id="504" parent="349" name="fk_performs_test_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="473" parent="345" name="fk_performs_test_pat_ID">
+    <foreign-key id="505" parent="349" name="fk_performs_test_pat_ID">
       <ColNames>pat_ID</ColNames>
       <RefTableName>patients</RefTableName>
       <RefColNames>pat_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="474" parent="345" name="fk_performs_test_test_ID">
+    <foreign-key id="506" parent="349" name="fk_performs_test_test_ID">
       <ColNames>test_ID</ColNames>
       <RefTableName>tests</RefTableName>
       <RefColNames>test_ID</RefColNames>
     </foreign-key>
-    <column id="475" parent="346" name="doc_ID">
+    <column id="507" parent="350" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="476" parent="346" name="med_ID">
+    <column id="508" parent="350" name="pat_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="477" parent="346" name="date">
+    <column id="509" parent="350" name="treat_ID">
       <Position>3</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="510" parent="350" name="dates">
+      <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="478" parent="346" name="fk_prescribe_medication_doc_ID">
+    <index id="511" parent="350" name="fk_performs_treatment_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="479" parent="346" name="fk_prescribe_medication_med_ID">
-      <ColNames>med_ID</ColNames>
+    <index id="512" parent="350" name="fk_performs_treatment_pat_ID">
+      <ColNames>pat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="480" parent="346" name="fk_prescribe_medication_doc_ID">
+    <index id="513" parent="350" name="fk_performs_treatment_treat_ID">
+      <ColNames>treat_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="514" parent="350" name="fk_performs_treatment_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="481" parent="346" name="fk_prescribe_medication_med_ID">
+    <foreign-key id="515" parent="350" name="fk_performs_treatment_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <RefTableName>patients</RefTableName>
+      <RefColNames>pat_ID</RefColNames>
+    </foreign-key>
+    <foreign-key id="516" parent="350" name="fk_performs_treatment_treat_ID">
+      <ColNames>treat_ID</ColNames>
+      <RefTableName>treatments</RefTableName>
+      <RefColNames>treat_ID</RefColNames>
+    </foreign-key>
+    <column id="517" parent="351" name="doc_ID">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="518" parent="351" name="med_ID">
+      <Position>2</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="519" parent="351" name="treat_ID">
+      <Position>3</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="520" parent="351" name="dates">
+      <Position>4</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="521" parent="351" name="fk_prescribe_medication_doc_ID">
+      <ColNames>doc_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="522" parent="351" name="fk_prescribe_medication_med_ID">
+      <ColNames>med_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="523" parent="351" name="fk_prescribe_medication_treat_ID">
+      <ColNames>treat_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="524" parent="351" name="fk_prescribe_medication_doc_ID">
+      <ColNames>doc_ID</ColNames>
+      <RefTableName>doctors</RefTableName>
+      <RefColNames>doc_ID</RefColNames>
+    </foreign-key>
+    <foreign-key id="525" parent="351" name="fk_prescribe_medication_med_ID">
       <ColNames>med_ID</ColNames>
       <RefTableName>medication</RefTableName>
       <RefColNames>med_ID</RefColNames>
     </foreign-key>
-    <column id="482" parent="347" name="proc_ID">
+    <foreign-key id="526" parent="351" name="fk_prescribe_medication_treat_ID">
+      <ColNames>treat_ID</ColNames>
+      <RefTableName>treatments</RefTableName>
+      <RefColNames>treat_ID</RefColNames>
+    </foreign-key>
+    <column id="527" parent="352" name="proc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="483" parent="347" name="name">
+    <column id="528" parent="352" name="name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="484" parent="347" name="category">
+    <column id="529" parent="352" name="category">
       <Position>3</Position>
       <DataType>varchar(50)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="485" parent="347" name="PRIMARY">
+    <key id="530" parent="352" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>proc_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="486" parent="348" name="doc_ID">
+    <column id="531" parent="353" name="doc_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="487" parent="348" name="treat_ID">
+    <column id="532" parent="353" name="treat_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="488" parent="348" name="date">
+    <column id="533" parent="353" name="diag_ID">
       <Position>3</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="534" parent="353" name="dates">
+      <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="489" parent="348" name="fk_recommends_doc_ID">
+    <index id="535" parent="353" name="fk_recommends_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="490" parent="348" name="fk_recommends_treat_ID">
+    <index id="536" parent="353" name="fk_recommends_treat_ID">
       <ColNames>treat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="491" parent="348" name="fk_recommends_doc_ID">
+    <index id="537" parent="353" name="fk_recommends_diag_ID">
+      <ColNames>diag_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="538" parent="353" name="fk_recommends_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="492" parent="348" name="fk_recommends_treat_ID">
+    <foreign-key id="539" parent="353" name="fk_recommends_treat_ID">
       <ColNames>treat_ID</ColNames>
       <RefTableName>treatments</RefTableName>
       <RefColNames>treat_ID</RefColNames>
     </foreign-key>
-    <column id="493" parent="349" name="doc_ID">
+    <foreign-key id="540" parent="353" name="fk_recommends_diag_ID">
+      <ColNames>diag_ID</ColNames>
+      <RefTableName>diagnosis</RefTableName>
+      <RefColNames>diag_ID</RefColNames>
+    </foreign-key>
+    <column id="541" parent="354" name="sec_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="494" parent="349" name="fk_resident_doc_ID">
+    <column id="542" parent="354" name="pat_ID">
+      <Position>2</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="543" parent="354" name="fam_hist_ID">
+      <Position>3</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="544" parent="354" name="dates">
+      <Position>4</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="545" parent="354" name="fk_registers_sec_ID">
+      <ColNames>sec_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="546" parent="354" name="fk_registers_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="547" parent="354" name="fk_registers_fam_hist_ID">
+      <ColNames>fam_hist_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="548" parent="354" name="fk_registers_sec_ID">
+      <ColNames>sec_ID</ColNames>
+      <RefTableName>secretaries</RefTableName>
+      <RefColNames>sec_ID</RefColNames>
+    </foreign-key>
+    <foreign-key id="549" parent="354" name="fk_registers_pat_ID">
+      <ColNames>pat_ID</ColNames>
+      <RefTableName>patients</RefTableName>
+      <RefColNames>pat_ID</RefColNames>
+    </foreign-key>
+    <foreign-key id="550" parent="354" name="fk_registers_fam_hist_ID">
+      <ColNames>fam_hist_ID</ColNames>
+      <RefTableName>familyhistory</RefTableName>
+      <RefColNames>fam_hist_ID</RefColNames>
+    </foreign-key>
+    <column id="551" parent="355" name="doc_ID">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="552" parent="355" name="fk_resident_doc_ID">
       <ColNames>doc_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="495" parent="349" name="fk_resident_doc_ID">
+    <foreign-key id="553" parent="355" name="fk_resident_doc_ID">
       <ColNames>doc_ID</ColNames>
       <RefTableName>doctors</RefTableName>
       <RefColNames>doc_ID</RefColNames>
     </foreign-key>
-    <column id="496" parent="350" name="result_ID">
+    <column id="554" parent="356" name="result_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="497" parent="350" name="result">
+    <column id="555" parent="356" name="test_result">
       <Position>2</Position>
       <DataType>varchar(200)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="498" parent="350" name="result_date">
+    <column id="556" parent="356" name="result_date">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="499" parent="350" name="PRIMARY">
+    <key id="557" parent="356" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>result_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="500" parent="351" name="sec_ID">
+    <column id="558" parent="357" name="scn_img_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="501" parent="351" name="fname">
+    <column id="559" parent="357" name="scn_img">
+      <Position>2</Position>
+      <DataType>mediumblob|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <key id="560" parent="357" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>scn_img_ID</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="561" parent="358" name="sec_ID">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="562" parent="358" name="fname">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="502" parent="351" name="lname">
+    <column id="563" parent="358" name="lname">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="503" parent="351" name="dob">
+    <column id="564" parent="358" name="dob">
       <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="504" parent="351" name="address">
+    <column id="565" parent="358" name="address">
       <Position>5</Position>
       <DataType>varchar(500)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="505" parent="351" name="phone">
+    <column id="566" parent="358" name="phone">
       <Position>6</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="506" parent="351" name="PRIMARY">
+    <key id="567" parent="358" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>sec_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="507" parent="352" name="test_ID">
+    <column id="568" parent="359" name="test_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="508" parent="352" name="name">
+    <column id="569" parent="359" name="name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="509" parent="352" name="type">
+    <column id="570" parent="359" name="types">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="510" parent="352" name="PRIMARY">
+    <key id="571" parent="359" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>test_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="511" parent="353" name="treat_ID">
+    <column id="572" parent="360" name="treat_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="512" parent="353" name="name">
+    <column id="573" parent="360" name="name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="513" parent="353" name="PRIMARY">
+    <key id="574" parent="360" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>treat_ID</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="514" parent="354" name="nurse_ID">
+    <column id="575" parent="361" name="nurse_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="515" parent="354" name="pat_ID">
+    <column id="576" parent="361" name="pat_ID">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="516" parent="354" name="date">
+    <column id="577" parent="361" name="treat_ID">
       <Position>3</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="578" parent="361" name="dates">
+      <Position>4</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="517" parent="354" name="fk_treats_nurse_ID">
+    <index id="579" parent="361" name="fk_treats_nurse_ID">
       <ColNames>nurse_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="518" parent="354" name="fk_treats_pat_ID">
+    <index id="580" parent="361" name="fk_treats_pat_ID">
       <ColNames>pat_ID</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="519" parent="354" name="fk_treats_nurse_ID">
+    <index id="581" parent="361" name="fk_treats_treat_ID">
+      <ColNames>treat_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <foreign-key id="582" parent="361" name="fk_treats_nurse_ID">
       <ColNames>nurse_ID</ColNames>
       <RefTableName>nurses</RefTableName>
       <RefColNames>nurse_ID</RefColNames>
     </foreign-key>
-    <foreign-key id="520" parent="354" name="fk_treats_pat_ID">
+    <foreign-key id="583" parent="361" name="fk_treats_pat_ID">
       <ColNames>pat_ID</ColNames>
       <RefTableName>patients</RefTableName>
       <RefColNames>pat_ID</RefColNames>
     </foreign-key>
-    <column id="521" parent="355" name="vitals_ID">
+    <foreign-key id="584" parent="361" name="fk_treats_treat_ID">
+      <ColNames>treat_ID</ColNames>
+      <RefTableName>treatments</RefTableName>
+      <RefColNames>treat_ID</RefColNames>
+    </foreign-key>
+    <column id="585" parent="362" name="vitals_ID">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="522" parent="355" name="temperature">
+    <column id="586" parent="362" name="temperature">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="523" parent="355" name="pulse">
+    <column id="587" parent="362" name="pulse">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="524" parent="355" name="blood_pressure">
+    <column id="588" parent="362" name="blood_pressure">
       <Position>4</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="525" parent="355" name="respiratory">
+    <column id="589" parent="362" name="respiratory">
       <Position>5</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="526" parent="355" name="PRIMARY">
+    <key id="590" parent="362" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>vitals_ID</ColNames>
       <Primary>1</Primary>
     </key>
+    <argument id="591" parent="363" name="fname">
+      <Position>1</Position>
+      <DataType>varchar(100)|0s</DataType>
+    </argument>
+    <argument id="592" parent="363" name="lname">
+      <Position>2</Position>
+      <DataType>varchar(100)|0s</DataType>
+    </argument>
+    <argument id="593" parent="363" name="dob">
+      <Position>3</Position>
+      <DataType>date|0s</DataType>
+    </argument>
+    <argument id="594" parent="363" name="address">
+      <Position>4</Position>
+      <DataType>varchar(500)|0s</DataType>
+    </argument>
+    <argument id="595" parent="363" name="phone">
+      <Position>5</Position>
+      <DataType>int(11)|0s</DataType>
+    </argument>
   </database-model>
 </dataSource>

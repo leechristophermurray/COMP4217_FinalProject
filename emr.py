@@ -4,7 +4,7 @@ import dataconnector
 app = Flask(__name__)
 
 app.config['SQL_HOST'] = 'localhost'
-app.config['SQL_CRED'] = {}
+app.config['SQL_CRED'] = {'USR': '', 'PWD': ''}
 app.config['SQL_DB'] = 'HOSPITAL'
 
 
@@ -41,6 +41,11 @@ def home(usr):
 @app.context_processor
 def utility_processor():
 
+    def get_role():
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+            tuple = con.get_role()
+        return tuple
+
     def get_doctors():
         with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
             doctors = con.get_doctors()
@@ -51,4 +56,4 @@ def utility_processor():
             nurses = con.get_nurses()
         return nurses
 
-    return {'get_doctors': get_doctors, 'get_nurses': get_nurses}
+    return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses}

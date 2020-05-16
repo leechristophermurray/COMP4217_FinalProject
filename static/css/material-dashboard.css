@@ -15639,9 +15639,9 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 }
 
 .fixed-plugin .dropdown-menu {
-  right: 80px;
+  right: 98vw;
   left: auto;
-  width: 290px;
+  width: 98vw;
   border-radius: 0.1875rem;
   padding: 0 10px;
 }
@@ -16655,7 +16655,7 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 .fixed-plugin .dropdown .dropdown-menu {
   top: -40px !important;
   opacity: 0;
-  left: -303px !important;
+  /*left: -303px !important;*/
   transform-origin: 100% 0;
   display: block;
 }
