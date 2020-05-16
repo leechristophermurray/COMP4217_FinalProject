@@ -149,15 +149,19 @@ CREATE TABLE IF NOT EXISTS accesses (
 CREATE TABLE IF NOT EXISTS administers (
     nurse_ID INT NOT NULL,
     med_ID INT NOT NULL,
+    pat_ID INT NOT NULL,
     dates DATE NOT NULL,
     dosage VARCHAR (20) NOT NULL,
     dosage_intervals VARCHAR (20) NOT NULL,
 
     CONSTRAINT pk_administers
         PRIMARY KEY(nurse_ID,med_ID),
-    CONSTRAINT fk_administers
+    CONSTRAINT fk_administers_nurse_ID
         FOREIGN KEY (nurse_ID)
-            REFERENCES Nurses(nurse_ID)
+            REFERENCES Nurses(nurse_ID),
+    CONSTRAINT fk_administers_pat_ID
+ 	FOREIGN KEY (pat_ID)
+            REFERENCES Patients(pat_ID)
 );
 
 CREATE TABLE IF NOT EXISTS afflicted_with (
@@ -200,12 +204,12 @@ CREATE TABLE IF NOT EXISTS attached_to (
     result_ID INT NOT NULL,
     scn_img_ID INT NOT NULL,
 
-    CONSTRAINT fk_attached_to_pat_ID
+    CONSTRAINT fk_attached_to_result_ID
         FOREIGN KEY (result_ID)
             REFERENCES Results(result_ID),
     CONSTRAINT fk_attached_to_scn_img_ID 
-        FOREIGN KEY (scn_img_ID )
-            REFERENCES ScnImg (scn_img_ID )
+        FOREIGN KEY (scn_img_ID)
+            REFERENCES ScnImg(scn_img_ID)
 );
 
 CREATE TABLE IF NOT EXISTS belongs_to (
@@ -272,9 +276,9 @@ CREATE TABLE IF NOT EXISTS makes_diagnosis (
     CONSTRAINT fk_makes_diagnosis_diag_ID
         FOREIGN KEY (diag_ID)
             REFERENCES Diagnosis(diag_ID),
-	CONSTRAINT fk_makes_diagnosis_pat_ID
-		FOREIGN KEY (pat_ID)
-		    REFERENCES Patients(pat_ID)
+    CONSTRAINT fk_makes_diagnosis_pat_ID
+	FOREIGN KEY (pat_ID)
+	    REFERENCES Patients(pat_ID)
 );
 
 CREATE TABLE IF NOT EXISTS performs_procedure (
@@ -331,18 +335,22 @@ CREATE TABLE IF NOT EXISTS performs_treatment (
 CREATE TABLE IF NOT EXISTS prescribe_medication (
     doc_ID INT NOT NULL,
     med_ID INT NOT NULL,
+    pat_ID INT NOT NULL,
     treat_ID INT NOT NULL,
     dates DATE NOT NULL,
 
     CONSTRAINT fk_prescribe_medication_doc_ID
         FOREIGN KEY (doc_ID)
             REFERENCES Doctors(doc_ID),
+    CONSTRAINT fk_medication_pat_ID
+        FOREIGN KEY (pat_ID)
+            REFERENCES Patients(pat_ID),
     CONSTRAINT fk_prescribe_medication_med_ID
         FOREIGN KEY (med_ID)
             REFERENCES Medication(med_ID),
-	CONSTRAINT fk_prescribe_medication_treat_ID
-		FOREIGN KEY (treat_ID)
-			REFERENCES Treatments(treat_ID)
+    CONSTRAINT fk_prescribe_medication_treat_ID
+	FOREIGN KEY (treat_ID)
+		REFERENCES Treatments(treat_ID)
 );
 
 CREATE TABLE IF NOT EXISTS recommends (
@@ -357,9 +365,9 @@ CREATE TABLE IF NOT EXISTS recommends (
     CONSTRAINT fk_recommends_treat_ID
         FOREIGN KEY (treat_ID)
             REFERENCES Treatments(treat_ID),
-	CONSTRAINT fk_recommends_diag_ID
-		FOREIGN KEY (diag_ID)
-			REFERENCES Diagnosis(diag_ID)
+    CONSTRAINT fk_recommends_diag_ID
+	FOREIGN KEY (diag_ID)
+	    REFERENCES Diagnosis(diag_ID)
 );
 
 CREATE TABLE IF NOT EXISTS registers (
@@ -371,7 +379,7 @@ CREATE TABLE IF NOT EXISTS registers (
     CONSTRAINT fk_registers_sec_ID
         FOREIGN KEY (sec_ID)
             REFERENCES Secretaries(sec_ID),
-	CONSTRAINT fk_registers_pat_ID
+    CONSTRAINT fk_registers_pat_ID
         FOREIGN KEY (pat_ID)
             REFERENCES Patients(pat_ID),
     CONSTRAINT fk_registers_fam_hist_ID
@@ -391,9 +399,9 @@ CREATE TABLE IF NOT EXISTS treats (
     CONSTRAINT fk_treats_pat_ID
         FOREIGN KEY (pat_ID)
             REFERENCES Patients(pat_ID),
-	CONSTRAINT fk_treats_treat_ID
-		FOREIGN KEY (treat_ID)
-			REFERENCES Treatments(treat_ID)
+    CONSTRAINT fk_treats_treat_ID
+	FOREIGN KEY (treat_ID)
+	    REFERENCES Treatments(treat_ID)
 );
 
 
@@ -422,6 +430,140 @@ CREATE TABLE IF NOT EXISTS Resident (
         FOREIGN KEY (doc_ID)
             REFERENCES Doctors(doc_ID)
 );
+
+CREATE PROCEDURE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
+	IN start_date DATE, 
+	IN end_date DATE, 
+	IN diagnosis VARCHAR(100))
+	
+	BEGIN
+        SELECT fname,lname FROM Patients 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_ID FROM makes_diagnosis 
+		
+		WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
+		
+	SELECT diag_ID FROM Diagnosis 
+		
+		WHERE name = diagnosis));
+    	END;
+
+
+CREATE PROCEDURE OR REPLACE PROCEDURE GetAllergyByPatient(
+	IN first_name VARCHAR(100), 
+	IN last_name VARCHAR(100))
+	
+	BEGIN
+        SELECT name FROM OtherAllergies 
+		
+		WHERE Allergy_ID IN(
+		
+	SELECT allergy_ID FROM afflicted_with 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_id FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name)) 
+		
+			UNION 
+		
+	SELECT gen_name FROM Medication 
+		
+		WHERE med_ID IN(
+		
+	SELECT med_ID FROM allergic_to 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_id FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name));
+    	END;
+
+	
+CREATE PROCEDURE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
+	
+	BEGIN
+        SELECT gen_name FROM Medication 
+		
+		WHERE med_ID IN(
+		
+	SELECT med_ID FROM allergic_to 
+			
+		GROUP BY med_ID HAVING COUNT(pat_ID) >= ALL(
+		
+	SELECT COUNT(pat_ID) FROM allergic_to GROUP BY med_ID));
+    	END;
+
+
+CREATE PROCEDURE OR REPLACE PROCEDURE GetImgResultsByPatient(
+	IN first_name VARCHAR(100), 
+	IN last_name VARCHAR(100))
+	
+	BEGIN
+	SELECT test_result FROM Results 
+		
+		WHERE result_ID IN(
+		
+	SELECT The.result_ID FROM generate_results AS The, attached_to as Atch 
+		
+		WHERE The.result_ID  = Atch.result_ID  AND The.result_ID IN(
+		
+	SELECT result_ID FROM generate_results 
+		
+		WHERE test_ID IN(
+		
+	SELECT test_ID FROM performs_test 
+		
+		WHERE pat_ID IN(
+		
+	SELECT pat_ID FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name))));
+    	END;
+
+
+CREATE PROCEDURE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
+	IN start_date DATE, 
+	IN end_date DATE,
+	IN first_name VARCHAR(100), 
+	IN last_name VARCHAR(100))
+	
+	BEGIN
+        SELECT fname,lname FROM Nurses 
+		
+		WHERE nurse_id IN(
+		
+	SELECT nurse_id FROM administers 
+		
+		WHERE dates BETWEEN start_date AND end_date AND pat_ID IN(
+		
+	SELECT pat_ID FROM Patients 
+		
+		WHERE fname = first_name and lname = last_name));
+    	END;
+
+
+CREATE PROCEDURE OR REPLACE PROCEDURE GetInternsByMostPatient()
+	
+	BEGIN
+        SELECT fname,lname FROM Doctors 
+		
+		WHERE doc_ID IN(
+		
+	SELECT Newb.doc_ID FROM Intern AS Newb, performs_treatment AS Help 
+		
+		WHERE Newb.doc_ID = Help.doc_ID AND Help.doc_ID IN( 
+		
+	SELECT doc_ID FROM performs_treatment 
+			
+		GROUP BY doc_ID HAVING COUNT(pat_ID) >= ALL(
+		
+	SELECT COUNT(pat_ID) FROM performs_treatment GROUP BY doc_ID)));
+    	END;
 
 # Store Procedures
 
