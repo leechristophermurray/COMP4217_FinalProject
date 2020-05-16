@@ -431,144 +431,200 @@ CREATE TABLE IF NOT EXISTS Resident (
             REFERENCES Doctors(doc_ID)
 );
 
-CREATE PROCEDURE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
+
+# 5a
+CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
 	IN start_date DATE, 
 	IN end_date DATE, 
-	IN diagnosis VARCHAR(100))
-	
+	IN diagnosis VARCHAR(100)
+)
 	BEGIN
         SELECT fname,lname FROM Patients 
 		
-		WHERE pat_ID IN(
-		
-	SELECT pat_ID FROM makes_diagnosis 
-		
-		WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
-		
-	SELECT diag_ID FROM Diagnosis 
-		
-		WHERE name = diagnosis));
-    	END;
+            WHERE pat_ID IN(
+
+                    SELECT pat_ID FROM makes_diagnosis
+
+                        WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
+
+                    SELECT diag_ID FROM Diagnosis AS d
+
+                        WHERE d.name = diagnosis)
+                );
+    END;
 
 
-CREATE PROCEDURE OR REPLACE PROCEDURE GetAllergyByPatient(
+CREATE OR REPLACE PROCEDURE GetAllergyByPatient(
 	IN first_name VARCHAR(100), 
-	IN last_name VARCHAR(100))
-	
+	IN last_name VARCHAR(100)
+	)
 	BEGIN
-        SELECT name FROM OtherAllergies 
-		
-		WHERE Allergy_ID IN(
-		
-	SELECT allergy_ID FROM afflicted_with 
-		
-		WHERE pat_ID IN(
-		
-	SELECT pat_id FROM Patients 
-		
-		WHERE fname = first_name and lname = last_name)) 
-		
-			UNION 
-		
-	SELECT gen_name FROM Medication 
-		
-		WHERE med_ID IN(
-		
-	SELECT med_ID FROM allergic_to 
-		
-		WHERE pat_ID IN(
-		
-	SELECT pat_id FROM Patients 
-		
-		WHERE fname = first_name and lname = last_name));
-    	END;
+        SELECT name FROM OtherAllergies
+		    WHERE Allergy_ID IN(
+                SELECT allergy_ID FROM afflicted_with
+                    WHERE pat_ID IN(
+                            SELECT pat_id FROM Patients
+                                WHERE fname = first_name and lname = last_name)
+		                )
+        UNION
+        SELECT gen_name FROM Medication
+            WHERE med_ID IN(
+                SELECT med_ID FROM allergic_to
+                    WHERE pat_ID IN(
+                            SELECT pat_id FROM Patients
+                                WHERE fname = first_name and lname = last_name
+                )
+        );
+    END;
 
-	
-CREATE PROCEDURE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
-	
+# 5b
+CREATE OR REPLACE PROCEDURE
+    get_allergens_of_patient(
+    patID INT
+)
+    BEGIN
+        SELECT a.name       AS Allergen,
+               p.fname      AS FirstName,
+               p.lname      AS LastName
+        FROM patients AS p
+             JOIN afflicted_with aw ON p.pat_ID = aw.pat_ID
+             JOIN otherallergies AS a ON a.allergy_ID = aw.allergy_ID
+        WHERE p.pat_ID = patID
+
+        UNION
+
+        SELECT m.gen_name   AS Allergen,
+               p.fname      AS FirstName,
+               p.lname      AS LastName
+        FROM patients AS p
+             JOIN allergic_to at ON p.pat_ID = at.pat_ID
+             JOIN medication AS m ON m.med_ID = at.med_ID
+        WHERE p.pat_ID = patID;
+    END;
+
+# CALL get_patients_by_allergens();
+
+CREATE OR REPLACE PROCEDURE
+    get_patients_by_allergens(
+)
+    BEGIN
+        SELECT a.name       AS Allergen,
+               p.fname      AS FirstName,
+               p.lname      AS LastName
+        FROM patients AS p
+             JOIN afflicted_with aw ON p.pat_ID = aw.pat_ID
+             JOIN otherallergies AS a ON a.allergy_ID = aw.allergy_ID
+
+        UNION
+
+        SELECT m.gen_name   AS Allergen,
+               p.fname      AS FirstName,
+               p.lname      AS LastName
+        FROM patients AS p
+             JOIN allergic_to at ON p.pat_ID = at.pat_ID
+             JOIN medication AS m ON m.med_ID = at.med_ID;
+    END;
+
+# CALL get_patients_by_allergens();
+
+# 5c
+CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
 	BEGIN
-        SELECT gen_name FROM Medication 
-		
-		WHERE med_ID IN(
-		
-	SELECT med_ID FROM allergic_to 
-			
-		GROUP BY med_ID HAVING COUNT(pat_ID) >= ALL(
-		
-	SELECT COUNT(pat_ID) FROM allergic_to GROUP BY med_ID));
-    	END;
+        SELECT
+               gen_name
+        FROM Medication
+            WHERE med_ID IN(
+                SELECT med_ID
+                FROM allergic_to
+                GROUP BY med_ID
+                    HAVING COUNT(pat_ID) > (
+                        SELECT
+                               AVG(at_avg.Amount)
+                        FROM (
+                            SELECT
+                               COUNT(pat_ID) AS Amount
+                            FROM allergic_to
+                            GROUP BY med_ID
+                            ) AS at_avg
+                        )
+                );
+    END;
 
-
-CREATE PROCEDURE OR REPLACE PROCEDURE GetImgResultsByPatient(
-	IN first_name VARCHAR(100), 
-	IN last_name VARCHAR(100))
-	
+# 5d
+CREATE OR REPLACE PROCEDURE GetResultsByPatient(
+    IN patID INT
+)
 	BEGIN
-	SELECT test_result FROM Results 
-		
-		WHERE result_ID IN(
-		
-	SELECT The.result_ID FROM generate_results AS The, attached_to as Atch 
-		
-		WHERE The.result_ID  = Atch.result_ID  AND The.result_ID IN(
-		
-	SELECT result_ID FROM generate_results 
-		
-		WHERE test_ID IN(
-		
-	SELECT test_ID FROM performs_test 
-		
-		WHERE pat_ID IN(
-		
-	SELECT pat_ID FROM Patients 
-		
-		WHERE fname = first_name and lname = last_name))));
-    	END;
+        SELECT
+           test_result,
+           scn_img_ID
+        FROM
+             performs_test AS pt
+             JOIN tests AS t
+                ON pt.test_ID = t.test_ID
+                    AND pat_ID = patID
+            JOIN  generate_results AS gr
+                 ON t.test_ID = gr.test_ID
+            JOIN results AS r
+                ON gr.result_ID = r.result_ID
+            LEFT JOIN attached_to AS at
+                ON r.result_ID = at.result_ID;
+	    # WHERE pat_ID = patID;
+    END;
 
-
-CREATE PROCEDURE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
+# 5e
+CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
 	IN start_date DATE, 
 	IN end_date DATE,
-	IN first_name VARCHAR(100), 
-	IN last_name VARCHAR(100))
-	
+	IN patID INT
+)
 	BEGIN
-        SELECT fname,lname FROM Nurses 
-		
-		WHERE nurse_id IN(
-		
-	SELECT nurse_id FROM administers 
-		
-		WHERE dates BETWEEN start_date AND end_date AND pat_ID IN(
-		
-	SELECT pat_ID FROM Patients 
-		
-		WHERE fname = first_name and lname = last_name));
-    	END;
+        SELECT
+               nurse_ID,
+               fname,
+               lname
+        FROM Nurses
+            WHERE nurse_id IN(
+                    SELECT
+                           nurse_id
+                    FROM administers
+                    WHERE (dates BETWEEN
+                                start_date AND end_date)
+                        AND pat_ID = patID);
+    END;
 
-
-CREATE PROCEDURE OR REPLACE PROCEDURE GetInternsByMostPatient()
-	
+# 5f
+CREATE OR REPLACE PROCEDURE GetInternsByMostPatient()
 	BEGIN
-        SELECT fname,lname FROM Doctors 
-		
-		WHERE doc_ID IN(
-		
-	SELECT Newb.doc_ID FROM Intern AS Newb, performs_treatment AS Help 
-		
-		WHERE Newb.doc_ID = Help.doc_ID AND Help.doc_ID IN( 
-		
-	SELECT doc_ID FROM performs_treatment 
-			
-		GROUP BY doc_ID HAVING COUNT(pat_ID) >= ALL(
-		
-	SELECT COUNT(pat_ID) FROM performs_treatment GROUP BY doc_ID)));
-    	END;
+        SELECT
+               fname,
+               lname
+        FROM Doctors
+            WHERE doc_ID IN(
+                    SELECT
+                           Newb.doc_ID
+                    FROM Intern AS Newb,
+                         performs_treatment AS Help
+                    WHERE Newb.doc_ID = Help.doc_ID
+                        AND Help.doc_ID IN(
+                                SELECT
+                                       doc_ID
+                                FROM performs_treatment
+                                GROUP BY doc_ID
+                                    HAVING COUNT(pat_ID) > (
+                                            SELECT AVG(pt_avg.Amount)
+                                            FROM (
+                                                SELECT COUNT(pat_ID) AS Amount
+                                                FROM performs_treatment
+                                                GROUP BY doc_ID
+                                                ) AS pt_avg
+                                        )
+                            )
+                );
+    END;
 
-# Store Procedures
+#  OTHER Store Procedures
 
-
-# GRANT ALL PRIVILEGES ON HOSPITAL.* to 'sysAdmin'@'%' IDENTIFIED BY 'sysAdmin123';
 
 CREATE OR REPLACE PROCEDURE sp_get_doctors()
     BEGIN
@@ -621,29 +677,6 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
 # CALL sp_get_currentuser('CarlaDavis');
 
 CREATE OR REPLACE PROCEDURE
-    get_patients_by_allergens(
-)
-    BEGIN
-        SELECT a.name  AS Allergen,
-               p.fname  AS FirstName,
-               p.lname AS LastName
-        FROM patients AS p
-                 JOIN afflicted_with aw on p.pat_ID = aw.pat_ID
-                 JOIN otherallergies as a on a.allergy_ID = aw.allergy_ID
-
-        UNION
-
-        SELECT m.gen_name AS Allergen,
-               p.fname     AS FirstName,
-               p.lname    AS LastName
-        FROM patients AS p
-                 JOIN allergic_to at on p.pat_ID = at.pat_ID
-                 JOIN medication as m on m.med_ID = at.med_ID;
-    END;
-
-# CALL get_patients_by_allergens();
-
-CREATE OR REPLACE PROCEDURE
     get_patients(
 )
     BEGIN
@@ -653,14 +686,13 @@ CREATE OR REPLACE PROCEDURE
                dob,
                address,
                phone
-        FROM Patients
+        FROM Patients;
     END;
 
 # CALL get_patients_by_allergens();
 
 
-
-#
+# Adder Store Procedures
 
 CREATE OR REPLACE PROCEDURE
     sp_add_patient(
@@ -685,8 +717,6 @@ CREATE OR REPLACE PROCEDURE
         END IF;
     END;
 
-
-#
 
 CREATE OR REPLACE PROCEDURE
     sp_add_secretary(
@@ -794,8 +824,6 @@ CREATE OR REPLACE PROCEDURE
             INSERT INTO Nurses VALUES (NULL, fname, lname, dob, address, phone, category);
         END IF;
     END;
-
-
 
 
 #
