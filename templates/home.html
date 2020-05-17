@@ -7,7 +7,7 @@
         <div class="container-fluid">
 
             <div class="row">
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-6 col-md-6">
 
 {#                        if  there are no doctors returned then the card isn't created #}
                     {% if get_doctors() | length > 0 %}
@@ -17,7 +17,7 @@
                     {% endif %}
 
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-6 col-md-6">
                     {% if get_nurses() | length > 0 %}
 
                         {% include "nurses_table.html" %}

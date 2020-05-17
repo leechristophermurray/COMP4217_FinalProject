@@ -491,15 +491,10 @@ CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
 )
 	BEGIN
         SELECT fname,lname FROM Patients 
-		
             WHERE pat_ID IN(
-
                     SELECT pat_ID FROM makes_diagnosis
-
                         WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
-
                     SELECT diag_ID FROM Diagnosis AS d
-
                         WHERE d.name = diagnosis)
                 );
     END;
@@ -744,18 +739,25 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
 
 CREATE OR REPLACE PROCEDURE
     get_patients(
+    q VARCHAR(100)
 )
     BEGIN
         SELECT
+               pat_ID,
                fname,
                lname,
                dob,
                address,
                phone
-        FROM Patients;
+        FROM Patients
+        WHERE LOCATE(q, fname)
+            OR LOCATE(q, lname)
+        ORDER BY RAND()
+        LIMIT 10;
+
     END;
 
-# CALL get_patients_by_allergens();
+# CALL get_patients('');
 
 
 # Adder Store Procedures
