@@ -66,15 +66,16 @@ class Connection:
         finally:
             return data
 
-    def add_patient(self):
+    def add_patient(self, fname, lname, dob, address, phone):
         data = ()
 
         try:
-
             # prepare a cursor object using cursor() method
             with self.CON.cursor() as cursor:
                 # execute SQL query using execute() method.
-                cursor.execute("CALL sp_add_patient();")
+                cursor.execute("CALL sp_add_patient('" + fname + "', '" + lname + "', '" + str(dob) + "', '" + address +
+                               "', " + str(phone) + ");")
+            self.CON.commit()
 
 
         except pymysql.err.OperationalError as e:

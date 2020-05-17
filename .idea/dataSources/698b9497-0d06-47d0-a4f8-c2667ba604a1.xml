@@ -1136,7 +1136,7 @@
       <RoutineKind>procedure</RoutineKind>
     </routine>
     <routine id="394" parent="4" name="sp_add_patient">
-      <SourceTextLength>483</SourceTextLength>
+      <SourceTextLength>512</SourceTextLength>
       <Definer>root@localhost</Definer>
       <RoutineKind>procedure</RoutineKind>
     </routine>
@@ -3281,7 +3281,7 @@ result_ID</ColNames>
     </argument>
     <argument id="867" parent="394" name="dob">
       <Position>3</Position>
-      <DataType>date|0s</DataType>
+      <DataType>varchar(100)|0s</DataType>
     </argument>
     <argument id="868" parent="394" name="address">
       <Position>4</Position>

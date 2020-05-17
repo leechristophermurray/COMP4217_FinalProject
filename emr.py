@@ -40,10 +40,9 @@ def home(usr):
         return render_template('home.html', usr=usr + 'lol')
 
 
-@app.route('/autocomplete', methods=['GET'])
-def autocomplete():
+@app.route('/autocomplete_icd', methods=['GET', 'POST'])
+def autocomplete_icd():
     search = request.args.get('q')
-    # loop = asyncio.get_event_loop()
     results = icdservice.search_term(search)
     final_result = []
     for result in results:
@@ -51,6 +50,20 @@ def autocomplete():
         final_result.append({'value': result['id'], 'text': text})
     final_result = jsonify(final_result)
     return final_result
+
+
+@app.route('/reg_patient', methods=['POST'])
+def reg_patient():
+    error = None
+    if request.method == 'POST':
+        if app.config['SQL_CRED']['USR'] == '' or app.config['SQL_CRED']['PWD'] == '':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+                con.add_patient(request.form['fname'], request.form['lname'], request.form['dob'],
+                                request.form['address'], request.form['phone'])
+                return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
+    return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 
 
 # CONTEXT PROCESSORS
@@ -72,4 +85,4 @@ def utility_processor():
             nurses = con.get_nurses()
         return nurses
 
-    return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses}
+    return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses, 'reg_patient': reg_patient}

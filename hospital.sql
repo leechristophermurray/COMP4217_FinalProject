@@ -764,7 +764,7 @@ CREATE OR REPLACE PROCEDURE
     sp_add_patient(
     fname VARCHAR(100),
     lname VARCHAR (100),
-    dob DATE,
+    dob VARCHAR (100),
     address VARCHAR (500),
     phone INT(11)
 )
@@ -774,14 +774,16 @@ CREATE OR REPLACE PROCEDURE
                                 FROM hospital.patients AS p
                                 WHERE p.fname = fname
                                 AND p.lname = lname
-                                AND p.dob = dob
+                                AND p.dob = CAST(dob AS DATE )
                                 AND p.address = address
                                 AND p.phone = phone)) THEN
 
-            INSERT INTO Patients VALUES (NULL, fname, lname, dob, address, phone);
+            INSERT INTO Patients VALUES (NULL, fname, lname, CAST(dob AS DATE), address, phone);
 
         END IF;
     END;
+
+# CALL sp_add_patient('Andy', 'Noobs', '2020-05-16', '228 HAMMOCK RIDGE DR', 5275469);
 
 
 CREATE OR REPLACE PROCEDURE
@@ -953,27 +955,27 @@ CREATE OR REPLACE PROCEDURE
 # Roles
 
 CREATE OR REPLACE ROLE Secretary;
-GRANT SELECT,INSERT,UPDATE ON patients.* TO Secretary;
-GRANT USAGE, SELECT ON doctors.* TO Secretary;
-GRANT USAGE, SELECT ON nurses.* TO Secretary;
+GRANT SELECT,INSERT,UPDATE ON hospital.patients TO Secretary;
+GRANT USAGE, SELECT ON hospital.doctors TO Secretary;
+GRANT USAGE, SELECT ON hospital.nurses TO Secretary;
 GRANT EXECUTE ON hospital.* TO Secretary;
 GRANT SELECT, USAGE ON mysql.proc TO Secretary;
 
 CREATE OR REPLACE ROLE Nurse;
-GRANT SELECT,INSERT,UPDATE ON accesses.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON administers.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON checks.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON treats.* TO Nurse;
-GRANT SELECT,INSERT,UPDATE ON patients.* TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON hospital.accesses TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON hospital.administers TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON hospital.checks TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON hospital.treats TO Nurse;
+GRANT SELECT,INSERT,UPDATE ON hospital.patients TO Nurse;
 
 CREATE OR REPLACE ROLE Doctor;
-GRANT SELECT,INSERT,UPDATE ON examine.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON makes_diagnosis.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON performs_procedure.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON performs_test.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON prescribe_medication.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON recommends.* TO Doctor;
-GRANT SELECT,INSERT,UPDATE ON patients.* TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.examine TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.makes_diagnosis TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.performs_procedure TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.performs_test TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.prescribe_medication TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.recommends TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.patients TO Doctor;
 
 CREATE OR REPLACE ROLE AppUser;
 GRANT USAGE, SELECT ON HOSPITAL.* TO AppUser;
