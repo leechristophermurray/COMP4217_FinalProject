@@ -4,7 +4,7 @@ CREATE DATABASE IF NOT EXISTS HOSPITAL DEFAULT CHARACTER SET UTF8 DEFAULT COLLAT
 
 USE HOSPITAL;
 
-CREATE TABLE IF NOT EXISTS Doctors(
+CREATE TABLE IF NOT EXISTS Doctors (
     doc_ID INT NOT NULL AUTO_INCREMENT,
     fname VARCHAR(100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Patients (
     PRIMARY KEY(pat_ID)
 );
 
-CREATE TABLE IF NOT EXISTS Secretaries(
+CREATE TABLE IF NOT EXISTS Secretaries (
     sec_ID INT NOT NULL AUTO_INCREMENT,
     fname VARCHAR(100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
@@ -487,41 +487,17 @@ CREATE OR REPLACE PROCEDURE make_diagnosis(
 CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
 	IN start_date DATE, 
 	IN end_date DATE, 
-	IN diagnosis VARCHAR(100)
+	IN diag_ID VARCHAR(100)
 )
 	BEGIN
         SELECT fname,lname FROM Patients 
             WHERE pat_ID IN(
                     SELECT pat_ID FROM makes_diagnosis
                         WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
-                    SELECT diag_ID FROM Diagnosis AS d
-                        WHERE d.name = diagnosis)
-                );
+                    SELECT diag_ID FROM Diagnosis
+                ));
     END;
 
-
-CREATE OR REPLACE PROCEDURE GetAllergyByPatient(
-	IN first_name VARCHAR(100), 
-	IN last_name VARCHAR(100)
-	)
-	BEGIN
-        SELECT name FROM OtherAllergies
-		    WHERE Allergy_ID IN(
-                SELECT allergy_ID FROM afflicted_with
-                    WHERE pat_ID IN(
-                            SELECT pat_id FROM Patients
-                                WHERE fname = first_name and lname = last_name)
-		                )
-        UNION
-        SELECT gen_name FROM Medication
-            WHERE med_ID IN(
-                SELECT med_ID FROM allergic_to
-                    WHERE pat_ID IN(
-                            SELECT pat_id FROM Patients
-                                WHERE fname = first_name and lname = last_name
-                )
-        );
-    END;
 
 # 5b
 CREATE OR REPLACE PROCEDURE
@@ -582,6 +558,7 @@ CREATE OR REPLACE PROCEDURE
 
 # CALL get_patients_by_allergens();
 
+						
 # 5c
 CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
 	BEGIN
@@ -611,6 +588,7 @@ CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
         ORDER BY risky_medz.pat_count DESC;
     END;
 
+						
 # 5d
 CREATE OR REPLACE PROCEDURE GetResultsByPatient(
     IN patID INT
@@ -633,6 +611,7 @@ CREATE OR REPLACE PROCEDURE GetResultsByPatient(
 	    # WHERE pat_ID = patID;
     END;
 
+						
 # 5e
 CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
 	IN start_date DATE, 
@@ -654,6 +633,7 @@ CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
                         AND pat_ID = patID);
     END;
 
+						
 # 5f
 CREATE OR REPLACE PROCEDURE GetInternsByMostPatient()
 	BEGIN
