@@ -15,7 +15,8 @@ urllib3.disable_warnings()
 payload = {'client_id': client_id,
            'client_secret': client_secret,
            'scope': scope,
-           'grant_type': grant_type}
+           'grant_type': grant_type,
+           'q': ''}
 
 # make request
 r = requests.post(token_endpoint, data=payload, verify=False).json()
@@ -26,7 +27,7 @@ def search_term(term):
     # access ICD API
     uri = 'https://id.who.int/icd/entity/search'
 
-    payload = {'q': term}
+    payload['q']= term
 
     # HTTP header fields to set
     headers = {'Authorization': 'Bearer ' + token,
@@ -37,6 +38,7 @@ def search_term(term):
     destination_entities = []
     results = []
     j = {}
+    r = requests.Response()
 
     try:
         # make request
@@ -57,7 +59,6 @@ def search_term(term):
         return e
 
     finally:
-
         destination_entities += j['destinationEntities']
 
         for entity in destination_entities:

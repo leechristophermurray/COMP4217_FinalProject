@@ -432,6 +432,57 @@ CREATE TABLE IF NOT EXISTS Resident (
 );
 
 
+# STORE PROCEDURES
+
+
+CREATE OR REPLACE PROCEDURE make_diagnosis(
+	IN docID INT,
+	IN patID INT,
+	IN icdID INT,
+	IN icdDesc VARCHAR(1000),
+	IN icdname VARCHAR(100),
+	IN specifics VARCHAR(500)
+)
+	BEGIN
+	    IF (
+	        (SELECT NOT EXISTS(
+                            SELECT 1
+                            FROM hospital.makes_diagnosis AS md
+                                     JOIN diagnosis AS d
+                                         ON md.diag_ID = d.diag_ID
+                            WHERE md.doc_ID = docID
+                              AND md.pat_ID = patId
+                              AND d.icd_ID = icdID
+                        )
+           )
+	        OR
+           (SELECT EXISTS(
+                           SELECT 1
+                           FROM hospital.makes_diagnosis AS md
+                                    JOIN diagnosis AS d
+                                         ON md.diag_ID = d.diag_ID
+                           WHERE md.doc_ID = docID
+                             AND md.pat_ID = patId
+                             AND d.icd_ID = icdID
+                             AND md.dates < CURRENT_DATE() - INTERVAL 1 WEEK
+                       )
+           )
+	    )
+	    THEN
+
+            INSERT INTO  diagnosis VALUES (NULL, icdID, icdDesc, icdname, specifics);
+            SET @diagID = (SELECT LAST_INSERT_ID());
+            INSERT INTO makes_diagnosis VALUES (docID, @diagID, patID, CURRENT_DATE());
+
+        END IF;
+
+    END;
+
+# CALL make_diagnosis(3,2,534877374,
+#     'Inhalation anthrax begins abruptly, usually 1-3 days (range, 1-60 d) after inhaling anthrax spores that are 1-5 µm in diameter. The number of spores needed to cause inhalation anthrax varies. This form presents initially with nonspecific symptoms, including a low-grade fever and a nonproductive cough. Patients may report substernal discomfort early in the illness. Patients may improve temporarily before rapidly deteriorating clinically with hemorrhagic mediastinitis. After the initial improvement, inhalation anthrax progresses rapidly, causing high fever, severe shortness of breath, tachypnea, cyanosis, profuse diaphoresis, hematemesis, and chest pain, which may be severe enough to mimic acute myocardial infarction.',
+#     'Pulmonary anthrax','N/A');
+
+
 # 5a
 CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
 	IN start_date DATE, 
@@ -508,21 +559,30 @@ CREATE OR REPLACE PROCEDURE
     get_patients_by_allergens(
 )
     BEGIN
-        SELECT a.name       AS Allergen,
-               p.fname      AS FirstName,
-               p.lname      AS LastName
+        SELECT
+               pat_ID,
+               FirstName,
+               LastName,
+               Allergen
+        FROM
+        (SELECT p.pat_ID,
+                p.fname      AS FirstName,
+                p.lname      AS LastName,
+                a.name       AS Allergen
         FROM patients AS p
              JOIN afflicted_with aw ON p.pat_ID = aw.pat_ID
              JOIN otherallergies AS a ON a.allergy_ID = aw.allergy_ID
 
         UNION
 
-        SELECT m.gen_name   AS Allergen,
+        SELECT p.pat_ID,
                p.fname      AS FirstName,
-               p.lname      AS LastName
+               p.lname      AS LastName,
+               m.gen_name   AS Allergen
         FROM patients AS p
              JOIN allergic_to at ON p.pat_ID = at.pat_ID
-             JOIN medication AS m ON m.med_ID = at.med_ID;
+             JOIN medication AS m ON m.med_ID = at.med_ID) AS pat_allergens
+        ORDER BY pat_ID;
     END;
 
 # CALL get_patients_by_allergens();
@@ -531,10 +591,14 @@ CREATE OR REPLACE PROCEDURE
 CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
 	BEGIN
         SELECT
-               gen_name
-        FROM Medication
-            WHERE med_ID IN(
-                SELECT med_ID
+               m.med_ID,
+               gen_name,
+               risky_medz.pat_count
+        FROM Medication AS m
+        JOIN (
+                SELECT
+                       med_ID,
+                       COUNT(pat_ID) AS pat_count
                 FROM allergic_to
                 GROUP BY med_ID
                     HAVING COUNT(pat_ID) > (
@@ -547,7 +611,9 @@ CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
                             GROUP BY med_ID
                             ) AS at_avg
                         )
-                );
+                ) AS risky_medz
+            ON m.med_ID = risky_medz.med_ID
+        ORDER BY risky_medz.pat_count DESC;
     END;
 
 # 5d

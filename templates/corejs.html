@@ -1,6 +1,6 @@
 
   <!--   Core JS Files   -->
-  <script src="{{ url_for('static', filename='js/core/jquery.min.js') }}"></script>
+{#  <script src="{{ url_for('static', filename='js/core/jquery.min.js') }}"></script>#}
   <script src="{{ url_for('static', filename='js/core/popper.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/core/bootstrap-material-design.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/core/bootstrap-datepicker.js') }}"></script>
@@ -180,11 +180,19 @@
       });
     });
   </script>
+
     <script type="text/javascript">
         $(function () {
             $('#datepicker').datepicker();
         });
     </script>
+
+  <script type="text/javascript">
+        $(function() {
+            $("#diagnosis_search").autoComplete();
+        })
+    </script>
+
   <script>
     $(document).ready(function() {
       // Javascript method's body can be found in assets/js/demos.js

@@ -1,5 +1,9 @@
-from flask import Flask, request, redirect, render_template, url_for
+import re
+from flask import Flask, request, redirect, render_template, url_for, jsonify
+import json
 import dataconnector
+import icdservice
+import json
 
 app = Flask(__name__)
 
@@ -36,11 +40,23 @@ def home(usr):
         return render_template('home.html', usr=usr + 'lol')
 
 
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    search = request.args.get('q')
+    # loop = asyncio.get_event_loop()
+    results = icdservice.search_term(search)
+    final_result = []
+    for result in results:
+        text = re.sub('<[^<]+?>', '', result['title'])
+        final_result.append({'value': result['id'], 'text': text})
+    final_result = jsonify(final_result)
+    return final_result
+
+
 # CONTEXT PROCESSORS
 
 @app.context_processor
 def utility_processor():
-
     def get_role():
         with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
             tuple = con.get_role()
