@@ -3,6 +3,8 @@ from flask import Flask, request, redirect, render_template, url_for, jsonify
 import json
 import dataconnector
 import icdservice
+import datetime
+from datetime import datetime
 import json
 
 app = Flask(__name__)
@@ -52,6 +54,19 @@ def autocomplete_icd():
     return final_result
 
 
+
+@app.route('/get_patients/', methods=['GET', 'POST'])
+def get_patients():
+    search = request.args.get('search')
+    # print(search)
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+        pats = con.get_patients(search)
+        columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
+        pats = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
+        print(pats)
+    return pats
+
+
 @app.route('/reg_patient', methods=['POST'])
 def reg_patient():
     error = None
@@ -62,6 +77,21 @@ def reg_patient():
             with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
                 con.add_patient(request.form['fname'], request.form['lname'], request.form['dob'],
                                 request.form['address'], request.form['phone'])
+                return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
+    return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
+
+
+
+@app.route('/make_diagnosis', methods=['POST'])
+def make_diagnosis():
+    error = None
+    if request.method == 'POST':
+        if app.config['SQL_CRED']['USR'] == '' or app.config['SQL_CRED']['PWD'] == '':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+                con.add_patient(request.form['docID'], request.form['patID'], request.form['icdID'],
+                                request.form['icdDesc'], request.form['icdname'], request.form['specifics'])
                 return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
     return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 
@@ -85,9 +115,14 @@ def utility_processor():
             nurses = con.get_nurses()
         return nurses
 
-    def get_patients(q):
+    def get_patients(q=""):
         with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
-            nurses = con.get_patients(q)
-        return nurses
+            pats = con.get_patients(q)
+            # columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
+            pats = [[str(val) for val in row] for row in pats]
+            # print(pats)
+            # print(type(pats))
+        return pats
 
-    return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses, 'reg_patient': reg_patient, 'get_patients': get_patients}
+    return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses, 'reg_patient': reg_patient,
+            'get_patients': get_patients}
