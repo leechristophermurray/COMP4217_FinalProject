@@ -484,7 +484,7 @@ CREATE OR REPLACE PROCEDURE make_diagnosis(
 
 
 # 5a
-CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
+CREATE OR REPLACE PROCEDURE get_patient_by_diagnosis_and_date(
 	IN start_date DATE, 
 	IN end_date DATE, 
 	IN diag_ID VARCHAR(100)
@@ -560,7 +560,7 @@ CREATE OR REPLACE PROCEDURE
 
 						
 # 5c
-CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
+CREATE OR REPLACE PROCEDURE get_medicine_allergy_by_most_patients()
 	BEGIN
         SELECT
                m.med_ID,
@@ -590,7 +590,7 @@ CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
 
 						
 # 5d
-CREATE OR REPLACE PROCEDURE GetResultsByPatient(
+CREATE OR REPLACE PROCEDURE get_results_by_patient(
     IN patID INT
 )
 	BEGIN
@@ -613,7 +613,7 @@ CREATE OR REPLACE PROCEDURE GetResultsByPatient(
 
 						
 # 5e
-CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
+CREATE OR REPLACE PROCEDURE get_nurses_by_patient_and_date(
 	IN start_date DATE, 
 	IN end_date DATE,
 	IN patID INT
@@ -635,7 +635,7 @@ CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
 
 						
 # 5f
-CREATE OR REPLACE PROCEDURE GetInternsByMostPatient()
+CREATE OR REPLACE PROCEDURE get_interns_by_most_patients()
 	BEGIN
         SELECT
                fname,
