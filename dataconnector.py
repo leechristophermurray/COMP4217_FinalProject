@@ -162,3 +162,83 @@ class Connection:
 
         finally:
             return data
+
+   def get_patient_by_diagnosis_and_date(self, start_date, end_date, diag_ID):
+        data = ()
+ 
+        # prepare a cursor object using cursor() method
+        with self.CON.cursor() as cursor:
+ 
+            # execute SQL query using execute method
+            cursor.execute("CALL get_patient_by_diagnosis_and_date('" + str(start_date) + "',
+                            + str(end_date) + "', '" + str(diag_ID) + "');")
+ 
+            # fetch all the tuples in a list of lists
+            data = cursor.fetchall()
+            return data
+
+    def get_allergens_of_patient(self,patID):
+        data = ()
+
+        # prepare a cursor object using cursor() method
+        with self.CON.cursor() as cursor:
+ 
+            # execute SQL query using execute method
+            cursor.execute("CALL get_allergens_of_patient('" + str(patID) + "');")
+ 
+            # fetch all the tuples in a list of lists
+            data = cursor.fetchall()
+            return data
+    
+    def get_medicine_allergy_by_most_patients(self):
+        data = ()
+
+        # prepare a cursor object using cursor() method
+        with self.CON.cursor() as cursor:
+
+            # execute SQL query using execute method
+            cursor.execute("CALL get_medicine_allergy_by_most_patients();")
+
+            # fetch all the tuples in a list of lists
+            data = cursor.fetchall()
+            return data
+
+    def get_results_by_patient(self,patID):
+        data = ()
+
+        # prepare a cursor object using cursor() method
+        with self.CON.cursor() as cursor:
+ 
+            # execute SQL query using execute method
+            cursor.execute("CALL get_results_by_patient('" + str(patID) + "');")
+ 
+            # fetch all the tuples in a list of lists
+            data = cursor.fetchall()
+            return data
+    
+    def get_nurses_by_patient_and_date(self,start_date, end_date, patID):
+        data = ()
+
+        # prepare a cursor object using cursor() method
+        with self.CON.cursor() as cursor:
+ 
+            # execute SQL query using execute method
+            cursor.execute("CALL get_nurses_by_patient_and_date('" + str(start_date) + "', '" + str(end_date) + "',
+                            + str(patID) + "');")
+ 
+            # fetch all the tuples in a list of lists
+            data = cursor.fetchall()
+            return data
+    
+    def get_interns_by_most_patients(self):
+        data = ()
+
+        # prepare a cursor object using cursor() method
+        with self.CON.cursor() as cursor:
+
+            # execute SQL query using execute method
+            cursor.execute("CALL get_interns_by_most_patients();")
+
+            # fetch all the tuples in a list of lists
+            data = cursor.fetchall()
+            return data

@@ -81,7 +81,6 @@ def reg_patient():
     return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 
 
-
 @app.route('/make_diagnosis', methods=['POST'])
 def make_diagnosis():
     error = None
@@ -95,6 +94,28 @@ def make_diagnosis():
                 return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
     return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 
+@app.route('/get_patient_by_diagnosis_and_date', methods=['GET','POST'])
+def get_patient_by_diagnosis_and_date():
+    search = request.args.get('search')
+    # print(search)
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+            pats = con.get_patient_by_diagnosis_and_date(request.form['start_date'], request.form['end_date'], 
+                            request.form['diag_ID'])
+            columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
+            pats = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
+            print(pats)
+            return pats
+
+@app.route('/get_allergens_of_patient', methods=['GET','POST'])
+def get_allergens_of_patient():
+    search = request.args.get('search')
+    # print(search)
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+            allergens = con.get_patient_by_diagnosis_and_date(request.form['patID'])
+            columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
+            allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
+            print(allergens)
+            return allergens
 
 # CONTEXT PROCESSORS
 
