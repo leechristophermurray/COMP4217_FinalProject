@@ -752,12 +752,13 @@ CREATE OR REPLACE PROCEDURE
         FROM Patients
         WHERE LOCATE(q, fname)
             OR LOCATE(q, lname)
+            OR LOCATE(q, CONCAT(fname, ' ', lname))
         ORDER BY RAND()
-        LIMIT 10;
+        LIMIT 30;
 
     END;
 
-# CALL get_patients('');
+# CALL get_patients('Paul Shelton');
 
 
 # Adder Store Procedures
