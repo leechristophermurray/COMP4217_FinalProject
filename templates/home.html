@@ -31,9 +31,9 @@
                 <div class="col-lg-12 col-md-12">
 
 {#                        if  there are no doctors returned then the card isn't created #}
-                    {% if get_doctors() | length > 0 %}
+                    {% if get_patients('') | length > 0 %}
 
-                        {% include "doctors_table.html" %}
+                        {% include "patients_table.html" %}
 
                     {% endif %}
 

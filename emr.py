@@ -85,4 +85,9 @@ def utility_processor():
             nurses = con.get_nurses()
         return nurses
 
-    return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses, 'reg_patient': reg_patient}
+    def get_patients(q):
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+            nurses = con.get_patients(q)
+        return nurses
+
+    return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses, 'reg_patient': reg_patient, 'get_patients': get_patients}

@@ -66,6 +66,26 @@ class Connection:
         finally:
             return data
 
+    def get_patients(self, q=""):
+        data = ()
+
+        try:
+
+            # prepare a cursor object using cursor() method
+            with self.CON.cursor() as cursor:
+                # execute SQL query using execute() method.
+                cursor.execute("CALL get_patients('"+str(q)+"');")
+
+                # Fetch all the tuples in a list of lists.
+                data = cursor.fetchall()
+                return data
+
+        except pymysql.err.OperationalError as e:
+            return data
+
+        finally:
+            return data
+
     def add_patient(self, fname, lname, dob, address, phone):
         data = ()
 
