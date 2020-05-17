@@ -5,29 +5,36 @@
                                 <p class="card-category"><b>NOTICE:</b> Please take extra precaution, due to the COVID-19 pandemic.</p>
                             </div>
                             <div class="card-body table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover"
+                                      id="patient_search_table"
+                                       data-toggle="table"
+                                      data-search="true"
+                                       data-side-pagination="server"
+                                       data-defer-url="{{url_for('get_patients')}}"
+                                       data-ajax="ajaxRequest"
+                                       data-cache="false"
+                                      data-single-select="true"
+                                      data-click-to-select="true"
+                                       data-row-attributes="patRowAttr"
+                                >
                                     <thead class="text-warning">
-                                        <th>ID</th>
-                                        <th>Last Name</th>
-                                        <th>First Name</th>
-                                        <th>Date of Birth</th>
-                                        <th>Address</th>
-                                        <th>Contact</th>
+
+                                    <tr>
+                                        <th data-field="pat_ID">ID</th>
+                                        <th data-field="lname">Last Name</th>
+                                        <th data-field="fname">First Name</th>
+                                        <th data-field="dob">Date of Birth</th>
+                                        <th data-field="address">Address</th>
+                                        <th data-field="phone">Contact</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-
-                                        {% for pat in get_patients('')  %}
-                                            <tr>
-                                                <td>{{ pat[0] }}</td>
-                                                <td><b>{{ pat[2] }}</b></td>
-                                                <td>{{ pat[1] }}</td>
-                                                <td>{{ pat[3] }}</td>
-                                                <td>{{ pat[4] }}</td>
-                                                <td>{{ pat[5] }}</td>
-                                            </tr>
-                                        {% endfor %}
                                     </tbody>
                                 </table>
+
+
+                            {% include 'diagnosis.html' %}
+
 
 
                                 {% if error %}

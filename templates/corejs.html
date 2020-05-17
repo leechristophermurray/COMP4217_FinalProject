@@ -193,6 +193,57 @@
         })
     </script>
 
+
+<script>
+  function ajaxRequest(params) {
+        console.log(params)
+        $.get(
+            '/get_patients' + '?' + $.param(params.data)).then(function (res) {
+                console.log(res)
+                params.success(res)
+            }
+        );
+  }
+</script>
+
+
+<script>
+  function rowAttributes(row, index) {
+    return {
+      'data-toggle': 'popover',
+      'data-placement': 'bottom',
+      'data-trigger': 'click',
+      'data-target': '#diagnosisModalCenter',
+      'data-content': [
+        'Index: ' + index,
+        'pat_ID: ' + row.pat_ID,
+        'lname: ' + row.lname,
+        'fname: ' + row.fname,
+        'dob: ' + row.dob,
+        'address: ' + row.address,
+        'phone: ' + row.phone
+      ].join(', ')
+    }
+  }
+
+  $(function() {
+
+    $('#patient_search_table').on('click-row.bs.table', function (row, el, field) {
+
+      {#console.log('row', row);#}
+      console.log('el', el);
+      {#console.log('field', field);#}
+
+        $('#diagnosisModalCenter').modal('show');
+
+
+    })
+
+
+  })
+</script>
+
+
   <script>
     $(document).ready(function() {
       // Javascript method's body can be found in assets/js/demos.js

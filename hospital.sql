@@ -943,6 +943,11 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE make_diagnosis TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
             SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_patients TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;

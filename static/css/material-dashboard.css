@@ -22072,4 +22072,11 @@ fieldset[disabled][disabled] .dark-edition .has-error .form-control,
   }
 }
 
+
+
+.card-header-tool{
+  width: 300px;
+  float: right;
+}
+
 /*# sourceMappingURL=dashboard-free.css.map */

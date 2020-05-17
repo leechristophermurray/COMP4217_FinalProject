@@ -38,7 +38,6 @@ class Connection:
 
                 # Fetch all the tuples in a list of lists.
                 data = cursor.fetchall()
-                return data
 
         except pymysql.err.OperationalError as e:
             return data
@@ -58,7 +57,6 @@ class Connection:
 
                 # Fetch all the tuples in a list of lists.
                 data = cursor.fetchall()
-                return data
 
         except pymysql.err.OperationalError as e:
             return data
@@ -68,6 +66,7 @@ class Connection:
 
     def get_patients(self, q=""):
         data = ()
+        results = []
 
         try:
 
@@ -78,9 +77,9 @@ class Connection:
 
                 # Fetch all the tuples in a list of lists.
                 data = cursor.fetchall()
-                return data
 
         except pymysql.err.OperationalError as e:
+            print(e)
             return data
 
         finally:
@@ -95,6 +94,24 @@ class Connection:
                 # execute SQL query using execute() method.
                 cursor.execute("CALL sp_add_patient('" + fname + "', '" + lname + "', '" + str(dob) + "', '" + address +
                                "', " + str(phone) + ");")
+            self.CON.commit()
+
+
+        except pymysql.err.OperationalError as e:
+            return data
+
+        finally:
+            return data
+
+    def make_diagnosis(self, docID, patID, icdID, icdDesc, icdname, specifics):
+        data = ()
+
+        try:
+            # prepare a cursor object using cursor() method
+            with self.CON.cursor() as cursor:
+                # execute SQL query using execute() method.
+                cursor.execute("CALL make_diagnosis('" + str(docID) + "', '" + str(patID) + "', '" + str(icdID) + "', '" +
+                               icdDesc + "', " + specifics + "', " + str(icdname) + ");")
             self.CON.commit()
 
 
