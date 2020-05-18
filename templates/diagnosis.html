@@ -4,85 +4,134 @@
                               <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+
+
+                                      <div class="input-group no-border">
+                                          <select id="diagnosis_search" class="form-control basicAutoSelect" name="simple_select"
+                                            placeholder="type to search..."
+                                            data-url="{{url_for('autocomplete_icd')}}" autocomplete="off"></select>
+                                            <span class="input-group-addon">
+                                                <i class="material-icons">search</i>
+                                            </span>
+                                          <div class="ripple-container"></div>
+                                        </button>
+                                      </div>
+
+
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
-                                  <div class="modal-body">
+                                    <form id="diagnosisModalCenterForm" action="{{ url_for('make_diagnosis') }}" method="post">
+                                        <div class="modal-body">
 
 
-                                  <form action="{{ url_for('make_diagnosis') }}" method="post">
-                                    <div class="row">
-                                      <div class="col-md-6">
-                                        <div class="form-group">
-                                          <label class="bmd-label-floating">Fist Name</label>
-                                                <div class='input-group' id='phone_num'>
-                                                    <input type="text" class="form-control" name="fname" >
-                                                        <span class="input-group-addon">
-                                                            <i class="material-icons">person</i>
-                                                        </span>
-                                                </div>
+                                        <input type="text" class="form-control invisible" id="diagnosis_searchField"  name="diagnosis_search" readonly
+                                        value = "">
+                                        <input type="text" class="form-control invisible" id="d_docID"  name="docID" readonly
+                                        value = "">
+                                        <input type="text" class="form-control invisible" id="d_patID"  name="patID" readonly
+                                        value = "">
+                                        <input type="text" class="form-control invisible" id="d_icdID"  name="icdID" readonly
+                                        value = "">
+
+                                        <div class="row">
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Fist Name</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_fname"  name="fname" readonly
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">person</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Last Name</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_lname"  name="lname" readonly
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">person</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
                                         </div>
-                                      </div>
-                                      <div class="col-md-6">
-                                        <div class="form-group">
-                                          <label class="bmd-label-floating">Last Name</label>
-                                                <div class='input-group' id='phone_num'>
-                                                    <input type="text" class="form-control" name="lname" >
-                                                        <span class="input-group-addon">
-                                                            <i class="material-icons">person</i>
-                                                        </span>
-                                                </div>
+                                        <div class="row">
+                                          <div class="col-md-12">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Adress</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_address"  name="address" readonly
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">home</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </div>
-                                    <div class="row">
-                                      <div class="col-md-12">
-                                        <div class="form-group">
-                                          <label class="bmd-label-floating">Adress</label>
-                                                <div class='input-group' id='phone_num'>
-                                                    <input type="text" class="form-control" name="address" >
-                                                        <span class="input-group-addon">
-                                                            <i class="material-icons">home</i>
-                                                        </span>
-                                                </div>
+                                        <div class="row">
+                                          <div class="col-md-4">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Date of Birth</label>
+                                                    <div class='input-group'>
+                                                        <input type='text' class="form-control" id="d_dob"  name="dob" readonly
+                                                        value = "">
+                                                    </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-4">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Phone Number</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_phone"  name="phone" readonly
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">call</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </div>
-                                    <div class="row">
-                                      <div class="col-md-4">
-                                        <div class="form-group">
-                                          <label class="bmd-label-floating">Date of Birth</label>
-                                                <div class='input-group input-append date' id='datepicker' data-date-format="yyyy-mm-dd">
-                                                    <input type='date' class="form-control" name="dob"  />
-                                                    <span class="input-group-addon addon">
-                                                        <i class="material-icons">event</i>
-                                                    </span>
-                                                </div>
+                                        <div class="clearfix"></div>
+                                        <div class="row">
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Description</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_icdDesc"  name="desc" readonly
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">description</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Specifics</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_icdSpecs"  name="specs"
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">subject</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
                                         </div>
-                                      </div>
-                                      <div class="col-md-4">
-                                        <div class="form-group">
-                                          <label class="bmd-label-floating">Phone Number</label>
-                                                <div class='input-group' id='phone_num'>
-                                                    <input type="text" class="form-control" name="phone" >
-                                                        <span class="input-group-addon">
-                                                            <i class="material-icons">call</i>
-                                                        </span>
-                                                </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-outline-primary pull-right">Register</button>
-                                    <div class="clearfix"></div>
-                                  </form>
 
                                   </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                    <button type="submit" class="btn btn-outline-primary pull-right">Submit</button>
                                   </div>
+                                  </form>
                                 </div>
                               </div>
                             </div>

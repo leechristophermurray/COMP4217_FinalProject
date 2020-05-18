@@ -529,9 +529,11 @@ CREATE OR REPLACE PROCEDURE
     patID INT
 )
     BEGIN
-        SELECT a.name       AS Allergen,
-               p.fname      AS FirstName,
-               p.lname      AS LastName
+        SELECT aw.allergy_ID        AS AllergenID,
+               'Miscellaneous'      AS AllergenType,
+               a.name               AS Allergen,
+               p.fname              AS FirstName,
+               p.lname              AS LastName
         FROM patients AS p
              JOIN afflicted_with aw ON p.pat_ID = aw.pat_ID
              JOIN otherallergies AS a ON a.allergy_ID = aw.allergy_ID
@@ -539,9 +541,11 @@ CREATE OR REPLACE PROCEDURE
 
         UNION
 
-        SELECT m.gen_name   AS Allergen,
-               p.fname      AS FirstName,
-               p.lname      AS LastName
+        SELECT  at.med_ID           AS AllergenID,
+               'Medication'         AS AllergenType,
+               m.gen_name           AS Allergen,
+               p.fname              AS FirstName,
+               p.lname              AS LastName
         FROM patients AS p
              JOIN allergic_to at ON p.pat_ID = at.pat_ID
              JOIN medication AS m ON m.med_ID = at.med_ID
@@ -713,6 +717,7 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
         SELECT * FROM
             (SELECT
                CONCAT(fname,lname) AS usr,
+                doc_ID AS cuid,
                fname,
                lname,
                'Doctor' AS role
@@ -720,6 +725,7 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
             UNION
             SELECT
                CONCAT(fname,lname) AS usr,
+                    nurse_ID AS cuid,
                    fname,
                    lname,
                    'Nurse' AS role
@@ -727,6 +733,7 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
             UNION
             SELECT
                CONCAT(fname,lname) AS usr,
+                    sec_ID AS cuid,
                    fname,
                    lname,
                    'Secretary' AS role
@@ -989,6 +996,7 @@ GRANT SELECT,INSERT,UPDATE ON hospital.patients TO Nurse;
 CREATE OR REPLACE ROLE Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.examine TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.makes_diagnosis TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.diagnosis TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.performs_procedure TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.performs_test TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.prescribe_medication TO Doctor;
@@ -1005,4 +1013,4 @@ GRANT SELECT ON mysql.global_priv TO AppUser;
 #  CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
 #  CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
 #  CALL sp_add_doctor('Jeff', 'Rights', '1990-12-11', '345 Wilbo Avenue', 3472893);
-#  CALL sp_add_doctor('Timmy', 'Tuner', '1999-01-01', '345 Burner Way', 3472893);
+#  CALL sp_add_doctor('John', 'Jones', '1937-01-01', '346 Johnson Avenue', 4325763);

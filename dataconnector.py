@@ -18,7 +18,7 @@ class Connection:
     def __enter__(self):
 
         # Open database connection
-        self.CON = pymysql.connect("localhost", self.USR, self.PWD, "HOSPITAL")
+        self.CON = pymysql.connect("localhost", self.USR, self.PWD, "HOSPITAL", autocommit=True)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -110,15 +110,15 @@ class Connection:
             # prepare a cursor object using cursor() method
             with self.CON.cursor() as cursor:
                 # execute SQL query using execute() method.
-                cursor.execute("CALL make_diagnosis('" + str(docID) + "', '" + str(patID) + "', '" + str(icdID) + "', '" +
-                               icdDesc + "', " + specifics + "', " + str(icdname) + ");")
-            self.CON.commit()
+                cursor.execute("CALL make_diagnosis(" + str(docID) + ", " + str(patID) + ", " + str(icdID) + ", '" +
+                               icdDesc + "', '" + str(icdname) + "', '" + specifics + "');")
 
 
         except pymysql.err.OperationalError as e:
             return data
 
         finally:
+            self.CON.commit()
             return data
 
     def login(self):
@@ -140,7 +140,7 @@ class Connection:
             return data
 
         finally:
-            return data[0]
+            return data
 
     def get_role(self):
 

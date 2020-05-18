@@ -27,7 +27,7 @@ def login():
         else:
             with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
                 usr = con.login()
-                return render_template('home.html', usr=usr)
+                return render_template('home.html', usr=usr[0])
     return render_template('login.html', error=error)
 
 
@@ -85,13 +85,28 @@ def reg_patient():
 @app.route('/make_diagnosis', methods=['POST'])
 def make_diagnosis():
     error = None
+
+    # docID = request.form['docID']
+    patID = request.form['patID']
+    icdID = request.form['icdID']
+    # icdDesc = request.form['desc']
+    icdname = request.form['desc']    # icdname
+    specifics = request.form['specs']
+
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        usr = con.login()
+        docID = usr[1]
+
+
+    icdDesc = icdservice.get_entity_description(icdID)
+
     if request.method == 'POST':
         if app.config['SQL_CRED']['USR'] == '' or app.config['SQL_CRED']['PWD'] == '':
             error = 'Invalid Credentials. Please try again.'
         else:
             with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-                con.add_patient(request.form['docID'], request.form['patID'], request.form['icdID'],
-                                request.form['icdDesc'], request.form['icdname'], request.form['specifics'])
+                print(docID, patID, icdID, icdDesc, icdname, specifics)
+                con.make_diagnosis(docID, patID, icdID, icdDesc, icdname, specifics)
                 return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
     return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 

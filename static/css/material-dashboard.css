@@ -3888,7 +3888,7 @@ tbody.collapse.show {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  width: 100%;
+  width: 90%;
 }
 
 .input-group>.form-control,
@@ -5780,7 +5780,7 @@ button.close {
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: #ffffff;
+  background-color: #2b2a2a;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.3rem;
@@ -5807,7 +5807,7 @@ button.close {
 }
 
 .modal-header {
-  display: flex;
+  /*display: flex;*/
   align-items: flex-start;
   justify-content: space-between;
   padding: 1rem;
@@ -20757,7 +20757,9 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .dark-edition .form-control {
-  color: #fff;
+    color: #fff;
+    height: 45px !important;
+    vertical-align: bottom !important;
 }
 
 .dark-edition .form-control::-moz-placeholder {
@@ -22077,6 +22079,15 @@ fieldset[disabled][disabled] .dark-edition .has-error .form-control,
 .card-header-tool{
   width: 300px;
   float: right;
+}
+
+#diagnosis_search{
+  width: auto !important;
+}
+
+
+#diagnosisModalCenterForm .dark-edition .form-control{
+  color: #2b2a2a !important;
 }
 
 /*# sourceMappingURL=dashboard-free.css.map */
