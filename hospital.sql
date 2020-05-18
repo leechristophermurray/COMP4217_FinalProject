@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS attached_to (
     CONSTRAINT fk_attached_to_result_ID
         FOREIGN KEY (result_ID)
             REFERENCES Results(result_ID),
-    CONSTRAINT fk_attached_to_scn_img_ID 
+    CONSTRAINT fk_attached_to_scn_img_ID
         FOREIGN KEY (scn_img_ID)
             REFERENCES ScnImg(scn_img_ID)
 );
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS attached_to (
 CREATE TABLE IF NOT EXISTS belongs_to (
     pat_ID INT NOT NULL,
     vitals_ID INT NOT NULL,
-	
+
     CONSTRAINT fk_belongs_to_pat_ID
         FOREIGN KEY (pat_ID)
             REFERENCES Patients(pat_ID),
@@ -485,12 +485,12 @@ CREATE OR REPLACE PROCEDURE make_diagnosis(
 
 # 5a
 CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
-	IN start_date DATE, 
-	IN end_date DATE, 
+	IN start_date DATE,
+	IN end_date DATE,
 	IN diagnosis VARCHAR(100)
 )
 	BEGIN
-        SELECT fname,lname FROM Patients 
+        SELECT fname,lname FROM Patients
             WHERE pat_ID IN(
                     SELECT pat_ID FROM makes_diagnosis
                         WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
@@ -501,7 +501,7 @@ CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
 
 
 CREATE OR REPLACE PROCEDURE GetAllergyByPatient(
-	IN first_name VARCHAR(100), 
+	IN first_name VARCHAR(100),
 	IN last_name VARCHAR(100)
 	)
 	BEGIN
@@ -639,7 +639,7 @@ CREATE OR REPLACE PROCEDURE GetResultsByPatient(
 
 # 5e
 CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
-	IN start_date DATE, 
+	IN start_date DATE,
 	IN end_date DATE,
 	IN patID INT
 )
