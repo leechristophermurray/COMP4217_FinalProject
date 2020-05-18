@@ -1,0 +1,44 @@
+
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h4 class="card-title">Patients by Diagnosis</h4>
+                                <p class="card-category"><b>NOTICE:</b> Please take extra precaution, due to the COVID-19 pandemic.</p>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-hover"
+                                      id="patient_search_table"
+                                       data-toggle="table"
+                                      data-search="true"
+                                       data-side-pagination="server"
+                                       data-defer-url="{{url_for('get_patient_by_diagnosis_and_date')}}"
+                                       data-ajax="ajaxRequestByDiagAndDate"
+                                       data-cache="false"
+                                      data-single-select="true"
+                                      data-click-to-select="true"
+                                       data-row-attributes="patRowAttr"
+                                >
+                                    <thead class="text-warning">
+
+                                    <tr>
+                                        <th data-field="pat_ID">ID</th>
+                                        <th data-field="lname">Last Name</th>
+                                        <th data-field="fname">First Name</th>
+                                        <th data-field="dob">Date of Birth</th>
+                                        <th data-field="address">Address</th>
+                                        <th data-field="phone">Contact</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+
+                            {% include 'diagnosis.html' %}
+
+
+
+                                {% if error %}
+                                    <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
