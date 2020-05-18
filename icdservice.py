@@ -27,7 +27,7 @@ def search_term(term):
     # access ICD API
     uri = 'https://id.who.int/icd/entity/search'
 
-    payload['q']= term
+    payload['q'] = term
 
     # HTTP header fields to set
     headers = {'Authorization': 'Bearer ' + token,
@@ -67,7 +67,7 @@ def search_term(term):
                 'title': entity['title'],
                 'id': id,
                 'score': entity['score'],
-                'description': get_entity_description(id)
+                'description': ' '  # get_entity_description(id)
             }
             results.append(result)
 

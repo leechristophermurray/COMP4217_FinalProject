@@ -191,6 +191,16 @@
         $(function() {
             $("#diagnosis_search").autoComplete();
         })
+
+// Basic Select
+        $('#diagnosis_search').autoComplete();
+        $('#diagnosis_search').on('autocomplete.select', function (evt, item) {
+            console.log('select', item);
+            $("#d_icdID").val(item.value);
+            $("#d_icdDesc").val(item.text);
+
+
+        });
     </script>
 
 
@@ -232,7 +242,15 @@
 
       {#console.log('row', row);#}
       console.log('el', el);
+      console.log(Object.values(el));
       {#console.log('field', field);#}
+        console.log(el.lname);
+         $("#d_patID").val(el.pat_ID);
+         $("#d_lname").val(el.lname);
+         $("#d_fname").val(el.fname);
+         $("#d_dob").val(el.dob);
+         $("#d_address").val(el.address);
+         $("#d_phone").val(el.phone);
 
         $('#diagnosisModalCenter').modal('show');
 

@@ -4,7 +4,7 @@ CREATE DATABASE IF NOT EXISTS HOSPITAL DEFAULT CHARACTER SET UTF8 DEFAULT COLLAT
 
 USE HOSPITAL;
 
-CREATE TABLE IF NOT EXISTS Doctors (
+CREATE TABLE IF NOT EXISTS Doctors(
     doc_ID INT NOT NULL AUTO_INCREMENT,
     fname VARCHAR(100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Patients (
     PRIMARY KEY(pat_ID)
 );
 
-CREATE TABLE IF NOT EXISTS Secretaries (
+CREATE TABLE IF NOT EXISTS Secretaries(
     sec_ID INT NOT NULL AUTO_INCREMENT,
     fname VARCHAR(100) NOT NULL,
     lname VARCHAR (100) NOT NULL,
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS attached_to (
     CONSTRAINT fk_attached_to_result_ID
         FOREIGN KEY (result_ID)
             REFERENCES Results(result_ID),
-    CONSTRAINT fk_attached_to_scn_img_ID 
+    CONSTRAINT fk_attached_to_scn_img_ID
         FOREIGN KEY (scn_img_ID)
             REFERENCES ScnImg(scn_img_ID)
 );
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS attached_to (
 CREATE TABLE IF NOT EXISTS belongs_to (
     pat_ID INT NOT NULL,
     vitals_ID INT NOT NULL,
-	
+
     CONSTRAINT fk_belongs_to_pat_ID
         FOREIGN KEY (pat_ID)
             REFERENCES Patients(pat_ID),
@@ -484,20 +484,44 @@ CREATE OR REPLACE PROCEDURE make_diagnosis(
 
 
 # 5a
-CREATE OR REPLACE PROCEDURE get_patient_by_diagnosis_and_date(
-	IN start_date DATE, 
-	IN end_date DATE, 
-	IN diag_ID VARCHAR(100)
+CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
+	IN start_date DATE,
+	IN end_date DATE,
+	IN diagnosis VARCHAR(100)
 )
 	BEGIN
-        SELECT fname,lname FROM Patients 
+        SELECT fname,lname FROM Patients
             WHERE pat_ID IN(
                     SELECT pat_ID FROM makes_diagnosis
                         WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
-                    SELECT diag_ID FROM Diagnosis
-                ));
+                    SELECT diag_ID FROM Diagnosis AS d
+                        WHERE d.name = diagnosis)
+                );
     END;
 
+
+CREATE OR REPLACE PROCEDURE GetAllergyByPatient(
+	IN first_name VARCHAR(100),
+	IN last_name VARCHAR(100)
+	)
+	BEGIN
+        SELECT name FROM OtherAllergies
+		    WHERE Allergy_ID IN(
+                SELECT allergy_ID FROM afflicted_with
+                    WHERE pat_ID IN(
+                            SELECT pat_id FROM Patients
+                                WHERE fname = first_name and lname = last_name)
+		                )
+        UNION
+        SELECT gen_name FROM Medication
+            WHERE med_ID IN(
+                SELECT med_ID FROM allergic_to
+                    WHERE pat_ID IN(
+                            SELECT pat_id FROM Patients
+                                WHERE fname = first_name and lname = last_name
+                )
+        );
+    END;
 
 # 5b
 CREATE OR REPLACE PROCEDURE
@@ -505,9 +529,11 @@ CREATE OR REPLACE PROCEDURE
     patID INT
 )
     BEGIN
-        SELECT a.name       AS Allergen,
-               p.fname      AS FirstName,
-               p.lname      AS LastName
+        SELECT aw.allergy_ID        AS AllergenID,
+               'Miscellaneous'      AS AllergenType,
+               a.name               AS Allergen,
+               p.fname              AS FirstName,
+               p.lname              AS LastName
         FROM patients AS p
              JOIN afflicted_with aw ON p.pat_ID = aw.pat_ID
              JOIN otherallergies AS a ON a.allergy_ID = aw.allergy_ID
@@ -515,9 +541,11 @@ CREATE OR REPLACE PROCEDURE
 
         UNION
 
-        SELECT m.gen_name   AS Allergen,
-               p.fname      AS FirstName,
-               p.lname      AS LastName
+        SELECT  at.med_ID           AS AllergenID,
+               'Medication'         AS AllergenType,
+               m.gen_name           AS Allergen,
+               p.fname              AS FirstName,
+               p.lname              AS LastName
         FROM patients AS p
              JOIN allergic_to at ON p.pat_ID = at.pat_ID
              JOIN medication AS m ON m.med_ID = at.med_ID
@@ -558,9 +586,8 @@ CREATE OR REPLACE PROCEDURE
 
 # CALL get_patients_by_allergens();
 
-						
 # 5c
-CREATE OR REPLACE PROCEDURE get_medicine_allergy_by_most_patients()
+CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
 	BEGIN
         SELECT
                m.med_ID,
@@ -588,9 +615,8 @@ CREATE OR REPLACE PROCEDURE get_medicine_allergy_by_most_patients()
         ORDER BY risky_medz.pat_count DESC;
     END;
 
-						
 # 5d
-CREATE OR REPLACE PROCEDURE get_results_by_patient(
+CREATE OR REPLACE PROCEDURE GetResultsByPatient(
     IN patID INT
 )
 	BEGIN
@@ -611,10 +637,9 @@ CREATE OR REPLACE PROCEDURE get_results_by_patient(
 	    # WHERE pat_ID = patID;
     END;
 
-						
 # 5e
-CREATE OR REPLACE PROCEDURE get_nurses_by_patient_and_date(
-	IN start_date DATE, 
+CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
+	IN start_date DATE,
 	IN end_date DATE,
 	IN patID INT
 )
@@ -633,9 +658,8 @@ CREATE OR REPLACE PROCEDURE get_nurses_by_patient_and_date(
                         AND pat_ID = patID);
     END;
 
-						
 # 5f
-CREATE OR REPLACE PROCEDURE get_interns_by_most_patients()
+CREATE OR REPLACE PROCEDURE GetInternsByMostPatient()
 	BEGIN
         SELECT
                fname,
@@ -693,6 +717,7 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
         SELECT * FROM
             (SELECT
                CONCAT(fname,lname) AS usr,
+                doc_ID AS cuid,
                fname,
                lname,
                'Doctor' AS role
@@ -700,6 +725,7 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
             UNION
             SELECT
                CONCAT(fname,lname) AS usr,
+                    nurse_ID AS cuid,
                    fname,
                    lname,
                    'Nurse' AS role
@@ -707,6 +733,7 @@ CREATE OR REPLACE PROCEDURE sp_get_currentuser(
             UNION
             SELECT
                CONCAT(fname,lname) AS usr,
+                    sec_ID AS cuid,
                    fname,
                    lname,
                    'Secretary' AS role
@@ -969,6 +996,7 @@ GRANT SELECT,INSERT,UPDATE ON hospital.patients TO Nurse;
 CREATE OR REPLACE ROLE Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.examine TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.makes_diagnosis TO Doctor;
+GRANT SELECT,INSERT,UPDATE ON hospital.diagnosis TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.performs_procedure TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.performs_test TO Doctor;
 GRANT SELECT,INSERT,UPDATE ON hospital.prescribe_medication TO Doctor;
@@ -985,4 +1013,4 @@ GRANT SELECT ON mysql.global_priv TO AppUser;
 #  CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
 #  CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
 #  CALL sp_add_doctor('Jeff', 'Rights', '1990-12-11', '345 Wilbo Avenue', 3472893);
-#  CALL sp_add_doctor('Timmy', 'Tuner', '1999-01-01', '345 Burner Way', 3472893);
+#  CALL sp_add_doctor('John', 'Jones', '1937-01-01', '346 Johnson Avenue', 4325763);

@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 import pymysql
 
 
@@ -18,7 +17,7 @@ class Connection:
     def __enter__(self):
 
         # Open database connection
-        self.CON = pymysql.connect("localhost", self.USR, self.PWD, "HOSPITAL")
+        self.CON = pymysql.connect("localhost", self.USR, self.PWD, "HOSPITAL", autocommit=True)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -110,15 +109,15 @@ class Connection:
             # prepare a cursor object using cursor() method
             with self.CON.cursor() as cursor:
                 # execute SQL query using execute() method.
-                cursor.execute("CALL make_diagnosis('" + str(docID) + "', '" + str(patID) + "', '" + str(icdID) + "', '" +
-                               icdDesc + "', " + specifics + "', " + str(icdname) + ");")
-            self.CON.commit()
+                cursor.execute("CALL make_diagnosis(" + str(docID) + ", " + str(patID) + ", " + str(icdID) + ", '" +
+                               icdDesc + "', '" + str(icdname) + "', '" + specifics + "');")
 
 
         except pymysql.err.OperationalError as e:
             return data
 
         finally:
+            self.CON.commit()
             return data
 
     def login(self):
@@ -140,7 +139,7 @@ class Connection:
             return data
 
         finally:
-            return data[0]
+            return data
 
     def get_role(self):
 
@@ -163,33 +162,33 @@ class Connection:
         finally:
             return data
 
-   def get_patient_by_diagnosis_and_date(self, start_date, end_date, diag_ID):
+    def get_patient_by_diagnosis_and_date(self, start_date, end_date, diag_ID):
         data = ()
- 
+
         # prepare a cursor object using cursor() method
         with self.CON.cursor() as cursor:
- 
+
             # execute SQL query using execute method
-            cursor.execute("CALL get_patient_by_diagnosis_and_date('" + str(start_date) + "',
+            cursor.execute("CALL get_patient_by_diagnosis_and_date('" + str(start_date) + "', '"
                             + str(end_date) + "', '" + str(diag_ID) + "');")
- 
+
             # fetch all the tuples in a list of lists
             data = cursor.fetchall()
-            return data
+        return data
 
     def get_allergens_of_patient(self,patID):
         data = ()
 
         # prepare a cursor object using cursor() method
         with self.CON.cursor() as cursor:
- 
+
             # execute SQL query using execute method
             cursor.execute("CALL get_allergens_of_patient('" + str(patID) + "');")
- 
+
             # fetch all the tuples in a list of lists
             data = cursor.fetchall()
-            return data
-    
+        return data
+
     def get_medicine_allergy_by_most_patients(self):
         data = ()
 
@@ -201,35 +200,35 @@ class Connection:
 
             # fetch all the tuples in a list of lists
             data = cursor.fetchall()
-            return data
+        return data
 
     def get_results_by_patient(self,patID):
         data = ()
 
         # prepare a cursor object using cursor() method
         with self.CON.cursor() as cursor:
- 
+
             # execute SQL query using execute method
             cursor.execute("CALL get_results_by_patient('" + str(patID) + "');")
- 
+
             # fetch all the tuples in a list of lists
             data = cursor.fetchall()
-            return data
-    
+        return data
+
     def get_nurses_by_patient_and_date(self,start_date, end_date, patID):
         data = ()
 
         # prepare a cursor object using cursor() method
         with self.CON.cursor() as cursor:
- 
+
             # execute SQL query using execute method
-            cursor.execute("CALL get_nurses_by_patient_and_date('" + str(start_date) + "', '" + str(end_date) + "',
+            cursor.execute("CALL get_nurses_by_patient_and_date('" + str(start_date) + "', '" + str(end_date) + "', '"
                             + str(patID) + "');")
- 
+
             # fetch all the tuples in a list of lists
             data = cursor.fetchall()
-            return data
-    
+        return data
+
     def get_interns_by_most_patients(self):
         data = ()
 
@@ -241,4 +240,4 @@ class Connection:
 
             # fetch all the tuples in a list of lists
             data = cursor.fetchall()
-            return data
+        return data

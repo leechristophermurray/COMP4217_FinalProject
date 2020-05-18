@@ -27,7 +27,7 @@ def login():
         else:
             with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
                 usr = con.login()
-                return render_template('home.html', usr=usr)
+                return render_template('home.html', usr=usr[0])
     return render_template('login.html', error=error)
 
 
@@ -52,7 +52,6 @@ def autocomplete_icd():
         final_result.append({'value': result['id'], 'text': text})
     final_result = jsonify(final_result)
     return final_result
-
 
 
 @app.route('/get_patients/', methods=['GET', 'POST'])
@@ -84,80 +83,99 @@ def reg_patient():
 @app.route('/make_diagnosis', methods=['POST'])
 def make_diagnosis():
     error = None
+
+    # docID = request.form['docID']
+    patID = request.form['patID']
+    icdID = request.form['icdID']
+    # icdDesc = request.form['desc']
+    icdname = request.form['desc']  # icdname
+    specifics = request.form['specs']
+
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        usr = con.login()
+        docID = usr[1]
+
+    icdDesc = icdservice.get_entity_description(icdID)
+
     if request.method == 'POST':
         if app.config['SQL_CRED']['USR'] == '' or app.config['SQL_CRED']['PWD'] == '':
             error = 'Invalid Credentials. Please try again.'
         else:
             with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-                con.add_patient(request.form['docID'], request.form['patID'], request.form['icdID'],
-                                request.form['icdDesc'], request.form['icdname'], request.form['specifics'])
+                print(docID, patID, icdID, icdDesc, icdname, specifics)
+                con.make_diagnosis(docID, patID, icdID, icdDesc, icdname, specifics)
                 return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
     return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 
-@app.route('/get_patient_by_diagnosis_and_date', methods=['GET','POST'])
+
+@app.route('/get_patient_by_diagnosis_and_date', methods=['GET', 'POST'])
 def get_patient_by_diagnosis_and_date():
     search = request.args.get('search')
     # print(search)
-        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-            pats = con.get_patient_by_diagnosis_and_date(request.form['start_date'], request.form['end_date'], 
-                            request.form['diag_ID'])
-            columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
-            pats = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
-            print(pats)
-            return pats
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        pats = con.get_patient_by_diagnosis_and_date(request.form['start_date'], request.form['end_date'],
+                                                     request.form['diag_ID'])
+        columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
+        pats = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
+        print(pats)
+        return pats
 
-@app.route('/get_allergens_of_patient', methods=['GET','POST'])
+
+@app.route('/get_allergens_of_patient', methods=['GET', 'POST'])
 def get_allergens_of_patient():
     search = request.args.get('search')
     # print(search)
-        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-            allergens = con.get_allergens_of_patient(request.form['patID'])
-            columns = ['Allergen']
-            allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in allergens])
-            print(allergens)
-            return allergens
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        allergens = con.get_allergens_of_patient(request.form['patID'])
+        columns = ['Allergen']
+        allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in allergens])
+        print(allergens)
+        return allergens
 
-@app.route('/get_medicine_allergy_by_most_patients', methods=['GET','POST'])
+
+@app.route('/get_medicine_allergy_by_most_patients', methods=['GET', 'POST'])
 def get_medicine_allergy_by_most_patients():
-        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-            # DO WE NEED THIS?
-            # med_allergies = con.get_medicine_allergy_by_most_patients(request.form['patID'])
-            columns = ['med_ID', 'gen_name']
-            med_allergies = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in med_allergies])
-            print(med_allergies)
-            return med_allergies
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        # DO WE NEED THIS?
+        med_allergies = con.get_medicine_allergy_by_most_patients(request.form['patID'])
+        columns = ['med_ID', 'gen_name']
+        med_allergies = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in med_allergies])
+        print(med_allergies)
+        return med_allergies
 
-@app.route('/get_results_by_patient', methods=['GET','POST'])
+
+@app.route('/get_results_by_patient', methods=['GET', 'POST'])
 def get_results_by_patient():
-    search = request.args.get('search')
-    # print(search)
-        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-            pat_results = con.get_results_by_patient(request.form['patID'])
-            columns = ['test_result', 'scn_img_ID']
-            pat_results = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pat_results])
-            print(pat_results)
-            return pat_results
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        pat_results = con.get_results_by_patient(request.form['patID'])
+        columns = ['test_result', 'scn_img_ID']
+        pat_results = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pat_results])
+        print(pat_results)
+        return pat_results
 
-@app.route('/get_nurses_by_patient_and_date', methods=['GET','POST'])
+
+@app.route('/get_nurses_by_patient_and_date', methods=['GET', 'POST'])
 def get_nurses_by_patient_and_date():
-    search = request.args.get('search')
-    # print(search)
-        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-            nurses = con.get_nurses_by_patient_and_date(request.form['start_date'], request.form['end_date'], request.form['patID'])
-            columns = ['nurse_id', 'fname', 'lname']
-            nurses = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in nurses])
-            print(nurses)
-            return nurses
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        nurses = con.get_nurses_by_patient_and_date(request.form['start_date'], request.form['end_date'],
+                                                    request.form['patID'])
+        columns = ['nurse_id', 'fname', 'lname']
+        nurses = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in nurses])
+        print(nurses)
+        return nurses
 
-@app.route('/get_interns_by_most_patients', methods=['GET','POST'])
+
+@app.route('/get_interns_by_most_patients', methods=['GET', 'POST'])
 def get_interns_by_most_patients():
-        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-            # DO WE NEED THIS?
-            # interns = con.get_interns_by_most_patients(request.form['start_date'], request.form['end_date'], request.form['patID'])
-            columns = ['fname', 'lname']
-            interns = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in interns])
-            print(interns)
-            return interns
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        # DO WE NEED THIS?
+        interns = con.get_interns_by_most_patients(request.form['start_date'], request.form['end_date'],
+                                                   request.form['patID'])
+        columns = ['fname', 'lname']
+        interns = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in interns])
+        print(interns)
+        return interns
+
 
 # CONTEXT PROCESSORS
 
