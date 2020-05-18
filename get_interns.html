@@ -1,0 +1,38 @@
+
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h4 class="card-title">Intern with Most Patients</h4>
+                                <p class="card-category"><b>NOTICE:</b> Please take extra precaution, due to the COVID-19 pandemic.</p>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-hover"
+                                      id="intern_search_table"
+                                       data-toggle="table"
+                                      data-search="false"
+                                       data-side-pagination="server"
+                                       data-defer-url="{{url_for('get_interns_by_most_patients')}}"
+                                       data-ajax="ajaxRequestInterns"
+                                       data-cache="false"
+                                      data-single-select="true"
+                                      data-click-to-select="true"
+                                       data-row-attributes="patRowAttr"
+                                >
+                                    <thead class="text-warning">
+
+                                    <tr>
+                                        <th data-field="lname">Last Name</th>
+                                        <th data-field="fname">First Name</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+
+                         
+
+                                {% if error %}
+                                    <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
