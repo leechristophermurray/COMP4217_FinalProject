@@ -111,11 +111,53 @@ def get_allergens_of_patient():
     search = request.args.get('search')
     # print(search)
         with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-            allergens = con.get_patient_by_diagnosis_and_date(request.form['patID'])
-            columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
-            allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
+            allergens = con.get_allergens_of_patient(request.form['patID'])
+            columns = ['Allergen']
+            allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in allergens])
             print(allergens)
             return allergens
+
+@app.route('/get_medicine_allergy_by_most_patients', methods=['GET','POST'])
+def get_medicine_allergy_by_most_patients():
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+            # DO WE NEED THIS?
+            # med_allergies = con.get_medicine_allergy_by_most_patients(request.form['patID'])
+            columns = ['med_ID', 'gen_name']
+            med_allergies = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in med_allergies])
+            print(med_allergies)
+            return med_allergies
+
+@app.route('/get_results_by_patient', methods=['GET','POST'])
+def get_results_by_patient():
+    search = request.args.get('search')
+    # print(search)
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+            pat_results = con.get_results_by_patient(request.form['patID'])
+            columns = ['test_result', 'scn_img_ID']
+            pat_results = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pat_results])
+            print(pat_results)
+            return pat_results
+
+@app.route('/get_nurses_by_patient_and_date', methods=['GET','POST'])
+def get_nurses_by_patient_and_date():
+    search = request.args.get('search')
+    # print(search)
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+            nurses = con.get_nurses_by_patient_and_date(request.form['start_date'], request.form['end_date'], request.form['patID'])
+            columns = ['nurse_id', 'fname', 'lname']
+            nurses = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in nurses])
+            print(nurses)
+            return nurses
+
+@app.route('/get_interns_by_most_patients', methods=['GET','POST'])
+def get_interns_by_most_patients():
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+            # DO WE NEED THIS?
+            # interns = con.get_interns_by_most_patients(request.form['start_date'], request.form['end_date'], request.form['patID'])
+            columns = ['fname', 'lname']
+            interns = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in interns])
+            print(interns)
+            return interns
 
 # CONTEXT PROCESSORS
 
