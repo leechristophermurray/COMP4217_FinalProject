@@ -531,9 +531,7 @@ CREATE OR REPLACE PROCEDURE
     BEGIN
         SELECT aw.allergy_ID        AS AllergenID,
                'Miscellaneous'      AS AllergenType,
-               a.name               AS Allergen,
-               p.fname              AS FirstName,
-               p.lname              AS LastName
+               a.name               AS Allergen
         FROM patients AS p
              JOIN afflicted_with aw ON p.pat_ID = aw.pat_ID
              JOIN otherallergies AS a ON a.allergy_ID = aw.allergy_ID
@@ -543,16 +541,14 @@ CREATE OR REPLACE PROCEDURE
 
         SELECT  at.med_ID           AS AllergenID,
                'Medication'         AS AllergenType,
-               m.gen_name           AS Allergen,
-               p.fname              AS FirstName,
-               p.lname              AS LastName
+               m.gen_name           AS Allergen
         FROM patients AS p
              JOIN allergic_to at ON p.pat_ID = at.pat_ID
              JOIN medication AS m ON m.med_ID = at.med_ID
         WHERE p.pat_ID = patID;
     END;
 
-# CALL get_patients_by_allergens();
+ CALL get_allergens_of_patient(8398186);
 
 CREATE OR REPLACE PROCEDURE
     get_patients_by_allergens(
@@ -879,7 +875,7 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
-            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_patients_by_allergens TO \'',@username,'\'');
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_allergens_of_patient TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
@@ -945,7 +941,7 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
-            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_patients_by_allergens TO \'',@username,'\'');
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_allergens_of_patient TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;

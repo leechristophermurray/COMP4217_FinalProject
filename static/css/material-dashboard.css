@@ -2354,10 +2354,18 @@ pre code {
   opacity: 1;
 }
 
-.form-control:disabled,
-.form-control[readonly] {
+.form-control:disabled{
   background-color: #e9ecef;
   opacity: 1;
+}
+
+.form-control[readonly] {
+    background-color: #424141;
+    border-radius: 10px !important;
+    opacity: .65;
+    padding: 15px;
+    left: -5px;
+    top: -1px;
 }
 
 select.form-control:not([size]):not([multiple]) {
@@ -22088,6 +22096,21 @@ fieldset[disabled][disabled] .dark-edition .has-error .form-control,
 
 #diagnosisModalCenterForm .dark-edition .form-control{
   color: #2b2a2a !important;
+}
+
+#fixed_fields{
+  position: fixed;
+  top: 0;
+}
+
+#patient_table_card .search-input{
+  height: 30px !important;
+  vertical-align: middle !important;
+}
+
+#patient_table_card .btn .fa{
+  position: relative;
+  top: 8px !important;
 }
 
 /*# sourceMappingURL=dashboard-free.css.map */

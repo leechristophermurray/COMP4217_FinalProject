@@ -123,11 +123,14 @@ def get_patient_by_diagnosis_and_date():
 
 @app.route('/get_allergens_of_patient', methods=['GET', 'POST'])
 def get_allergens_of_patient():
-    search = request.args.get('search')
-    # print(search)
+    if (request.args.get('patID') == ''):
+        search = 0
+    else:
+        patID = request.args.get('patID')
+    print('patID:', patID)
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-        allergens = con.get_allergens_of_patient(request.form['patID'])
-        columns = ['Allergen']
+        allergens = con.get_allergens_of_patient(patID)
+        columns = ['AllergenID', 'AllergenType', 'Allergen', 'FirstName', 'LastName']
         allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in allergens])
         print(allergens)
         return allergens

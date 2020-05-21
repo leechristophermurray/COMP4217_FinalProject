@@ -1152,7 +1152,7 @@
       <RoutineKind>procedure</RoutineKind>
     </routine>
     <routine id="398" parent="4" name="get_allergens_of_patient">
-      <SourceTextLength>893</SourceTextLength>
+      <SourceTextLength>695</SourceTextLength>
       <Definer>root@localhost</Definer>
       <RoutineKind>procedure</RoutineKind>
     </routine>

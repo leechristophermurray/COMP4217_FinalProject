@@ -205,19 +205,16 @@
 
 
 <script>
-  function ajaxRequest(params) {
-        console.log(params)
-        $.get(
-            '/get_patients' + '?' + $.param(params.data)).then(function (res) {
-                console.log(res)
-                params.success(res)
-            }
-        );
-  }
 </script>
 
 
 <script>
+</script>
+
+
+<script>
+
+    var pat_ID = '';
   function rowAttributes(row, index) {
     return {
       'data-toggle': 'popover',
@@ -236,29 +233,69 @@
     }
   }
 
+    function loadAllergiesParams(params) {
+            return params;
+        }
+
+    function loadAllergies() {
+            $.get(
+                '/get_allergens_of_patient' + '?' + $.param({'patID': pat_ID})).then(function (res) {
+                    $('#diagnosisModalCenter').modal('show');
+                    if (res.length > 0) {
+                        $('#allergens_of_patient_table').bootstrapTable('load', res);
+                    }
+                }
+            );
+        }
+
   $(function() {
 
     $('#patient_search_table').on('click-row.bs.table', function (row, el, field) {
 
-      {#console.log('row', row);#}
-      console.log('el', el);
-      console.log(Object.values(el));
-      {#console.log('field', field);#}
-        console.log(el.lname);
-         $("#d_patID").val(el.pat_ID);
-         $("#d_lname").val(el.lname);
-         $("#d_fname").val(el.fname);
-         $("#d_dob").val(el.dob);
-         $("#d_address").val(el.address);
-         $("#d_phone").val(el.phone);
 
-        $('#diagnosisModalCenter').modal('show');
+        pat_ID = el.pat_ID;
 
+        loadAllergies();
+
+        if (pat_ID != '') {
+            console.log('pat_ID again: ',{{ pat_ID }});
+                 $("#d_patID").val(el.pat_ID);
+                 $("#d_lname").val(el.lname);
+                 $("#d_fname").val(el.fname);
+                 $("#d_dob").val(el.dob);
+                 $("#d_address").val(el.address);
+                 $("#d_phone").val(el.phone);
+
+        }
 
     })
-
-
   })
+
+
+  function ajaxRequest_patient_allergies(params) {
+        console.log(params);
+      params.data.search = pat_ID;
+        console.log('pat_ID: ' + pat_ID);
+
+          $.get(
+              '/get_allergens_of_patient' + '?' + $.param(params.data)).then(function (res) {
+                  console.log(res);
+                  params.success(res);
+              }
+          );
+
+  }
+
+
+  function ajaxRequest_patients(params) {
+        console.log(params)
+        $.get(
+            '/get_patients' + '?' + $.param(params.data)).then(function (res) {
+                console.log(res);
+                params.success(res);
+            }
+        );
+  }
 </script>
 
 

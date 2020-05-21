@@ -1,5 +1,5 @@
 
-                        <div class="card">
+                        <div id="patient_table_card" class="card">
                             <div class="card-header card-header-primary">
                                 <h4 class="card-title">All Patients</h4>
                                 <p class="card-category"><b>NOTICE:</b> Please take extra precaution, due to the COVID-19 pandemic.</p>
@@ -10,8 +10,10 @@
                                        data-toggle="table"
                                       data-search="true"
                                        data-side-pagination="server"
-                                       data-defer-url="{{url_for('get_patients')}}"
-                                       data-ajax="ajaxRequest"
+                                      data-show-search-button="true"
+                                      data-show-search-clear-button="true"
+                                       data-defer-url="{{url_for('get_allergens_of_patient')}}"
+                                       data-ajax="ajaxRequest_patients"
                                        data-cache="false"
                                       data-single-select="true"
                                       data-click-to-select="true"

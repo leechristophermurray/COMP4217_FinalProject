@@ -1,39 +1,66 @@
-
+{#                        {% if pat_ID %}#}
                             <!-- Modal -->
                             <div class="modal fade" id="diagnosisModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                               <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
-
-
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
                                       <div class="input-group no-border">
                                           <select id="diagnosis_search" class="form-control basicAutoSelect" name="simple_select"
-                                            placeholder="type to search..."
+                                            placeholder="search for diagnosis type using WHO's ICD catalogue..."
                                             data-url="{{url_for('autocomplete_icd')}}" autocomplete="off"></select>
                                             <span class="input-group-addon">
                                                 <i class="material-icons">search</i>
                                             </span>
                                           <div class="ripple-container"></div>
-                                        </button>
                                       </div>
 
 
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
                                   </div>
                                     <form id="diagnosisModalCenterForm" action="{{ url_for('make_diagnosis') }}" method="post">
                                         <div class="modal-body">
 
+                                            <blockquote> Before diagnosing or prescribing, please check the allergies below.</blockquote>
 
-                                        <input type="text" class="form-control invisible" id="diagnosis_searchField"  name="diagnosis_search" readonly
-                                        value = "">
-                                        <input type="text" class="form-control invisible" id="d_docID"  name="docID" readonly
-                                        value = "">
-                                        <input type="text" class="form-control invisible" id="d_patID"  name="patID" readonly
-                                        value = "">
-                                        <input type="text" class="form-control invisible" id="d_icdID"  name="icdID" readonly
-                                        value = "">
+                                            <div class="card-body table-responsive">
+                                                <table class="table table-hover"
+                                                      id="allergens_of_patient_table"
+                                                       data-toggle="table"
+                                                        data-side-pagination="server"
+                                                        data-query-params="loadAllergiesParams"
+                                                       data-cache="false"
+                                                >
+                                                    <thead class="text-warning">
+
+                                                    <tr>
+                                                        <th data-field="AllergenID">Allergen ID</th>
+                                                        <th data-field="AllergenType">Allergen Type</th>
+                                                        <th data-field="Allergen">Allergen</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+
+
+
+                                                {% if error %}
+                                                    <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                        <div id="fixed_fields">
+                                            <input type="text" class="form-control invisible" id="diagnosis_searchField"  name="diagnosis_search" readonly
+                                            value = "">
+                                            <input type="text" class="form-control invisible" id="d_docID"  name="docID" readonly
+                                            value = "">
+                                            <input type="text" class="form-control invisible" id="d_patID"  name="patID" readonly
+                                            value = "">
+                                            <input type="text" class="form-control invisible" id="d_icdID"  name="icdID" readonly
+                                            value = "">
+                                        </div>
 
                                         <div class="row">
                                           <div class="col-md-6">
@@ -102,7 +129,7 @@
                                         <div class="row">
                                           <div class="col-md-6">
                                             <div class="form-group">
-                                              <label class="bmd-label">Description</label>
+                                              <label class="bmd-label">ICD Title</label>
                                                     <div class='input-group' id='phone_num'>
                                                         <input type="text" class="form-control" id="d_icdDesc"  name="desc" readonly
                                                         value = "">
@@ -135,3 +162,4 @@
                                 </div>
                               </div>
                             </div>
+{#                        {% endif %}#}

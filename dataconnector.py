@@ -65,7 +65,6 @@ class Connection:
 
     def get_patients(self, q=""):
         data = ()
-        results = []
 
         try:
 
@@ -73,6 +72,26 @@ class Connection:
             with self.CON.cursor() as cursor:
                 # execute SQL query using execute() method.
                 cursor.execute("CALL get_patients('"+str(q)+"');")
+
+                # Fetch all the tuples in a list of lists.
+                data = cursor.fetchall()
+
+        except pymysql.err.OperationalError as e:
+            print(e)
+            return data
+
+        finally:
+            return data
+
+    def get_allergens_of_patient(self, patID):
+        data = ()
+
+        try:
+
+            # prepare a cursor object using cursor() method
+            with self.CON.cursor() as cursor:
+                # execute SQL query using execute() method.
+                cursor.execute("CALL get_allergens_of_patient('"+str(patID)+"');")
 
                 # Fetch all the tuples in a list of lists.
                 data = cursor.fetchall()
