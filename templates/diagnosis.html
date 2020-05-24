@@ -1,7 +1,7 @@
 {#                        {% if pat_ID %}#}
                             <!-- Modal -->
                             <div class="modal fade" id="diagnosisModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                              <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -24,32 +24,129 @@
 
                                             <blockquote> Before diagnosing or prescribing, please check the allergies below.</blockquote>
 
-                                            <div class="card-body table-responsive">
-                                                <table class="table table-hover"
-                                                      id="allergens_of_patient_table"
-                                                       data-toggle="table"
-                                                        data-side-pagination="server"
-                                                        data-query-params="loadAllergiesParams"
-                                                       data-cache="false"
-                                                >
-                                                    <thead class="text-warning">
+                                            <div class="card">
+                                                <div class="card-header card-header-tabs card-header-warning">
+                                                  <div class="nav-tabs-navigation">
+                                                    <div class="nav-tabs-wrapper">
+                                                      <span class="nav-tabs-title">Medical Information:</span>
+                                                      <ul class="nav nav-tabs" data-tabs="tabs">
+                                                        <li class="nav-item">
+                                                          <a class="nav-link active" href="#allergies" data-toggle="tab">
+                                                            <i class="material-icons">bug_report</i> Allergies
+                                                            <div class="ripple-container"></div>
+                                                          </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                          <a class="nav-link" href="#medication_history" data-toggle="tab">
+                                                            <i class="material-icons">local_pharmacy</i> Medications
+                                                            <div class="ripple-container"></div>
+                                                          </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                          <a class="nav-link" href="#test_results" data-toggle="tab">
+                                                            <i class="material-icons">ballot</i> Test Results
+                                                            <div class="ripple-container"></div>
+                                                          </a>
+                                                        </li>
+                                                      </ul>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="card-body">
+                                                  <div class="tab-content">
+                                                    <div class="tab-pane active" id="allergies">
 
-                                                    <tr>
-                                                        <th data-field="AllergenID">Allergen ID</th>
-                                                        <th data-field="AllergenType">Allergen Type</th>
-                                                        <th data-field="Allergen">Allergen</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                </table>
+                                                        <table class="table table-hover"
+                                                              id="allergens_of_patient_table"
+                                                               data-toggle="table"
+                                                                data-side-pagination="server"
+                                                                data-query-params="loadAllergiesParams"
+                                                               data-cache="false"
+                                                        >
+                                                            <thead class="text-warning">
+
+                                                            <tr>
+                                                                <th data-field="AllergenID">Allergen ID</th>
+                                                                <th data-field="AllergenType">Allergen Type</th>
+                                                                <th data-field="Allergen">Allergen</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
 
 
 
-                                                {% if error %}
-                                                    <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
-                                                {% endif %}
-                                            </div>
+                                                        {% if error %}
+                                                            <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                                        {% endif %}
+
+                                                    </div>
+                                                    <div class="tab-pane" id="medication_history">
+
+                                                        <table class="table table-hover"
+                                                              id="med_history_of_patient_table"
+                                                               data-toggle="table"
+                                                                data-side-pagination="server"
+                                                                data-query-params="loadMedHistParams"
+                                                               data-cache="false"
+                                                        >
+                                                            <thead class="text-warning">
+
+                                                            <tr>
+                                                                <th data-field="nurse_ID">Nurse ID</th>
+                                                                <th data-field="lname">Last Name</th>
+                                                                <th data-field="fname">First Name</th>
+                                                                <th data-field="gen_name">Medicine</th>
+                                                                <th data-field="dosage">Dosage</th>
+                                                                <th data-field="date_time">On</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+
+
+
+                                                        {% if error %}
+                                                            <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                                        {% endif %}
+
+                                                    </div>
+                                                    <div class="tab-pane" id="test_results">
+
+                                                        <table class="table table-hover"
+                                                              id="results_of_patient_table"
+                                                               data-toggle="table"
+                                                                data-side-pagination="server"
+                                                                data-query-params="loadResultsParams"
+                                                               data-cache="false"
+                                                        >
+                                                            <thead class="text-warning">
+
+                                                            <tr>
+                                                                <th data-field="TestType">Test Type</th>
+                                                                <th data-field="TestName">Test Name</th>
+                                                                <th data-field="TestResult">Test Result</th>
+                                                                <th data-field="Attachment">Attachment</th>
+                                                                <th data-field="TestDate">Test Date</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+
+
+
+                                                        {% if error %}
+                                                            <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                                        {% endif %}
+
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+
 
                                         <div id="fixed_fields">
                                             <input type="text" class="form-control invisible" id="diagnosis_searchField"  name="diagnosis_search" readonly
@@ -155,8 +252,8 @@
 
                                   </div>
                                   <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-outline-primary pull-right">Submit</button>
+                                    <button type="button" class="btn btn-secondary pull-right text-right" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-outline-primary pull-right text-right">Submit</button>
                                   </div>
                                   </form>
                                 </div>

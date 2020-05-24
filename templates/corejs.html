@@ -9,15 +9,17 @@
   <!-- Place this tag in your head or just before your close body tag. -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!--  Google Maps Plugin    -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9sma2QCjf9zMCNJqkOUlMZcJqz8WEvRM"></script>
   <!-- Chartist JS -->
-  <script src="{{ url_for('static', filename='js/plugins/chartist.min.js') }}"></script>
+{#  <script src="{{ url_for('static', filename='js/plugins/chartist.min.js') }}"></script>#}
+  <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
   <!--  Notifications Plugin    -->
   <script src="{{ url_for('static', filename='js/plugins/bootstrap-notify.js') }}"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{{ url_for('static', filename='js/material-dashboard.js') }}"></script>
   <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="{{ url_for('static', filename='demo/demo.js') }}"></script>
+{#  <script src="{{ url_for('static', filename='demo/demo.js') }}"></script>#}
+
   <script>
     $(document).ready(function() {
       $().ready(function() {
@@ -187,30 +189,21 @@
         });
     </script>
 
-  <script type="text/javascript">
-        $(function() {
-            $("#diagnosis_search").autoComplete();
-        })
+<script type="text/javascript">
+    $(function() {
+        $("#diagnosis_search").autoComplete();
+    })
 
 // Basic Select
-        $('#diagnosis_search').autoComplete();
-        $('#diagnosis_search').on('autocomplete.select', function (evt, item) {
-            console.log('select', item);
-            $("#d_icdID").val(item.value);
-            $("#d_icdDesc").val(item.text);
+    $('#diagnosis_search').autoComplete();
+    $('#diagnosis_search').on('autocomplete.select', function (evt, item) {
+        console.log('select', item);
+        $("#d_icdID").val(item.value);
+        $("#d_icdDesc").val(item.text);
 
 
-        });
-    </script>
-
-
-<script>
+    });
 </script>
-
-
-<script>
-</script>
-
 
 <script>
 
@@ -237,16 +230,53 @@
             return params;
         }
 
-    function loadAllergies() {
+    function loadResultsParams(params) {
+            return params;
+        }
+
+    function loadMedHistParams(params) {
+            return params;
+        }
+
+    function loadPatientData(patID) {
+
+        function loadTables(id, callback) {
+
             $.get(
-                '/get_allergens_of_patient' + '?' + $.param({'patID': pat_ID})).then(function (res) {
-                    $('#diagnosisModalCenter').modal('show');
+                '/get_allergens_of_patient' + '?' + $.param({'patID': id})).then(function (res) {
                     if (res.length > 0) {
                         $('#allergens_of_patient_table').bootstrapTable('load', res);
                     }
                 }
             );
+
+            $.get(
+                '/GetResultsByPatient' + '?' + $.param({'patID': id})).then(function (res) {
+                    if (res.length > 0) {
+                        console.log("med_hist: ", res)
+                        $('#results_of_patient_table').bootstrapTable('load', res);
+                    }
+                }
+            );
+            $.get(
+                '/GetNursesByPatientAndDate' + '?' + $.param({'patID': id})).then(function (res) {
+                    if (res.length > 0) {
+                        console.log("test_res: ", res)
+                        $('#med_history_of_patient_table').bootstrapTable('load', res);
+                    }
+                }
+            );
+
+            callback();
+
         }
+
+        function showModal() {
+            $('#diagnosisModalCenter').modal('show');
+        }
+
+        loadTables(patID,showModal);
+    }
 
   $(function() {
 
@@ -255,7 +285,7 @@
 
         pat_ID = el.pat_ID;
 
-        loadAllergies();
+        loadPatientData(pat_ID);
 
         if (pat_ID != '') {
             console.log('pat_ID again: ',{{ pat_ID }});
@@ -284,6 +314,34 @@
               }
           );
 
+  }
+
+
+  function ajaxRequest_GetResultsByPatient(params) {
+      console.log(params);
+      params.data.search = pat_ID;
+      console.log('pat_ID: ' + pat_ID);
+
+      $.get(
+          '/GetResultsByPatient' + '?' + $.param(params.data)).then(function (res) {
+              console.log(res);
+              params.success(res);
+          }
+      );
+  }
+
+
+  function ajaxRequest_GetNursesByPatientAndDate(params) {
+      console.log(params);
+      params.data.search = pat_ID;
+      console.log('pat_ID: ' + pat_ID);
+
+      $.get(
+          '/GetNursesByPatientAndDate' + '?' + $.param(params.data)).then(function (res) {
+              console.log(res);
+              params.success(res);
+          }
+      );
   }
 
 

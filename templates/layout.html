@@ -15,6 +15,7 @@
       <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link href="{{ url_for('static', filename='css/material-dashboard.css') }}" rel="stylesheet" media="screen">
+      <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
       <!-- CSS Just for demo purpose, don't include it in your project -->
       <link href="{{ url_for('static', filename='demo/demo.css') }}" rel="stylesheet" />
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/start/jquery-ui.min.css" rel="stylesheet">
@@ -28,12 +29,11 @@
   </head>>
 
   <body class="dark-edition">
-    <div class="wrapper ">
+    <diclass="wrapper ">
         <div class="main-panel">
-{#            {% include 'sidebar.html' %}#}
             {% block content %}{% endblock %}
         </div>
-    </div>
+    </di>
   {% include 'corejs.html' %}
   </body>
 

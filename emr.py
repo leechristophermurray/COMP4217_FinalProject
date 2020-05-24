@@ -4,7 +4,7 @@ import json
 import dataconnector
 import icdservice
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 
 app = Flask(__name__)
@@ -57,13 +57,12 @@ def autocomplete_icd():
 @app.route('/get_patients/', methods=['GET', 'POST'])
 def get_patients():
     search = request.args.get('search')
-    # print(search)
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
         pats = con.get_patients(search)
         columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
         pats = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
         print(pats)
-    return pats
+        return pats
 
 
 @app.route('/reg_patient', methods=['POST'])
@@ -124,7 +123,7 @@ def get_patient_by_diagnosis_and_date():
 @app.route('/get_allergens_of_patient', methods=['GET', 'POST'])
 def get_allergens_of_patient():
     if (request.args.get('patID') == ''):
-        search = 0
+        patID = 0
     else:
         patID = request.args.get('patID')
     print('patID:', patID)
@@ -134,6 +133,31 @@ def get_allergens_of_patient():
         allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in allergens])
         print(allergens)
         return allergens
+
+
+@app.route('/GetMedicineAllergyByMostPatients_forchart', methods=['GET', 'POST'])
+def GetMedicineAllergyByMostPatients_forchart():
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+        medz = con.GetMedicineAllergyByMostPatients()
+        return {'labels': [('MED-' + str(med[0])) for med in medz], 'series': [med[2] for med in medz]}
+
+
+@app.route('/GetInternPerformanceData', methods=['GET', 'POST'])
+def GetInternPerformanceData():
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+        data = con.GetInternPerformanceData()
+        for_legend = list(set([(str(d[1]) + ' ' + str(d[2])) for d in data]))
+        for_label = list(set([(str(d[4])) for d in data]))
+        for_label.sort()
+        for_series = []
+        for name in for_legend:
+            series = []
+            for date in for_label:
+                for d in data:
+                    if (str(d[4]) == date) and (str(d[1]) + ' ' + str(d[2]) == name):
+                        series.append(d[3])
+            for_series += [series]
+        return {'legendNames': for_legend, 'labels': for_label, 'series': for_series}
 
 
 @app.route('/get_medicine_allergy_by_most_patients', methods=['GET', 'POST'])
@@ -147,14 +171,44 @@ def get_medicine_allergy_by_most_patients():
         return med_allergies
 
 
-@app.route('/get_results_by_patient', methods=['GET', 'POST'])
-def get_results_by_patient():
+@app.route('/GetResultsByPatient', methods=['GET', 'POST'])
+def GetResultsByPatient():
+    if (request.args.get('patID') == ''):
+        patID = 0
+    else:
+        patID = request.args.get('patID')
+    print('patID:', patID)
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-        pat_results = con.get_results_by_patient(request.form['patID'])
-        columns = ['test_result', 'scn_img_ID']
+        pat_results = con.GetResultsByPatient(patID)
+        columns = ['TestType', 'TestName', 'TestResult', 'Attachment', 'TestDate']
         pat_results = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pat_results])
         print(pat_results)
         return pat_results
+
+
+@app.route('/GetNursesByPatientAndDate', methods=['GET', 'POST'])
+def GetNursesByPatientAndDate():
+    if (request.args.get('patID') == ''):
+        patID = 0
+    else:
+        patID = request.args.get('patID')
+    # if (request.args.get('startDate') == ''):
+    #     startDate = 0
+    # else:
+    #     startDate = request.args.get('startDate')
+    # if (request.args.get('endDate') == ''):
+    #     endDate = 0
+    # else:
+    #     endDate = request.args.get('endDate')
+    print('patID:', patID)
+    startDate = datetime.date(datetime.now()) - timedelta(days=7)
+    endDate = datetime.date(datetime.now())
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        nurses = con.GetNursesByPatientAndDate(startDate, endDate, patID)
+        columns = ['nurse_ID', 'fname', 'lname', 'gen_name', 'dosage', 'date_time']
+        nurses = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in nurses])
+        print(nurses)
+        return nurses
 
 
 @app.route('/get_nurses_by_patient_and_date', methods=['GET', 'POST'])
@@ -199,14 +253,24 @@ def utility_processor():
             nurses = con.get_nurses()
         return nurses
 
+    def GetMedicineAllergyByMostPatients_perm():
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+            medz = con.GetMedicineAllergyByMostPatients()
+            if (medz):
+                return 1
+
+    def GetInternPerformanceData_perm():
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+            data = con.GetInternPerformanceData()
+            if (data):
+                return 1
+
     def get_patients(q=""):
         with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
             pats = con.get_patients(q)
-            # columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
             pats = [[str(val) for val in row] for row in pats]
-            # print(pats)
-            # print(type(pats))
-        return pats
+            return pats
 
     return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses, 'reg_patient': reg_patient,
-            'get_patients': get_patients}
+            'GetMedicineAllergyByMostPatients_perm': GetMedicineAllergyByMostPatients_perm,
+            'GetInternPerformanceData_perm': GetInternPerformanceData_perm, 'get_patients': get_patients}

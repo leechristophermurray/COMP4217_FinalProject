@@ -150,17 +150,18 @@ CREATE TABLE IF NOT EXISTS administers (
     nurse_ID INT NOT NULL,
     med_ID INT NOT NULL,
     pat_ID INT NOT NULL,
-    dates DATE NOT NULL,
+    date_time DATETIME NOT NULL,
     dosage VARCHAR (20) NOT NULL,
     dosage_intervals VARCHAR (20) NOT NULL,
 
-    CONSTRAINT pk_administers
-        PRIMARY KEY(nurse_ID,med_ID),
     CONSTRAINT fk_administers_nurse_ID
         FOREIGN KEY (nurse_ID)
             REFERENCES Nurses(nurse_ID),
+    CONSTRAINT fk_administers_med_ID
+ 	    FOREIGN KEY (med_ID)
+            REFERENCES Medication(med_ID),
     CONSTRAINT fk_administers_pat_ID
- 	FOREIGN KEY (pat_ID)
+ 	    FOREIGN KEY (pat_ID)
             REFERENCES Patients(pat_ID)
 );
 
@@ -251,14 +252,15 @@ CREATE TABLE IF NOT EXISTS examine (
 );
 
 CREATE TABLE IF NOT EXISTS generate_results (
-    test_ID INT NOT NULL,
-    result_ID INT NOT NULL,
+    doc_ID INT(11) NOT NULL,
+    pat_ID INT(11) NOT NULL,
+    test_ID INT(11) NOT NULL,
+    testDate DATE,
+    result_ID INT(11) NOT NULL,
 
-    CONSTRAINT pk_generate_results
-        PRIMARY KEY(test_ID,result_ID),
-    CONSTRAINT fk_generate_results_test_ID
-        FOREIGN KEY (test_ID)
-            REFERENCES Tests(test_ID),
+    CONSTRAINT fk_generate_results_doc_pat_test_ID
+        FOREIGN KEY (doc_ID,pat_ID,test_ID, testDate)
+        REFERENCES performs_test(doc_ID,pat_ID,test_ID, dates),
     CONSTRAINT fk_generate_results_result_ID
         FOREIGN KEY (result_ID)
             REFERENCES Results(result_ID)
@@ -312,7 +314,8 @@ CREATE TABLE IF NOT EXISTS performs_test (
             REFERENCES Patients(pat_ID),
     CONSTRAINT fk_performs_test_test_ID
         FOREIGN KEY (test_ID)
-            REFERENCES Tests(test_ID)
+            REFERENCES Tests(test_ID),
+    PRIMARY KEY (doc_ID, pat_ID, test_ID, dates)
 );
 
 CREATE TABLE IF NOT EXISTS performs_treatment (
@@ -483,6 +486,56 @@ CREATE OR REPLACE PROCEDURE make_diagnosis(
 #     'Pulmonary anthrax','N/A');
 
 
+
+CREATE OR REPLACE PROCEDURE check_vitals(
+	IN nurseID INT,
+	IN patID INT,
+	IN temp INT,
+	IN pulse_arg INT,
+	IN bp INT,
+	IN resp VARCHAR(500)
+)
+	BEGIN
+	    IF (
+	        (SELECT NOT EXISTS(
+                            SELECT 1
+                            FROM hospital.checks AS c
+                                 JOIN vitalsigns AS v
+                                    ON c.nurse_ID = nurseID
+                                    AND c.vitals_ID = v.vitals_ID
+                                 JOIN belongs_to AS bt
+                                     ON bt.pat_ID = patId
+                        )
+           )
+	        OR
+           (SELECT EXISTS(
+                           SELECT 1
+                            FROM hospital.checks AS c
+                                 JOIN vitalsigns AS v
+                                    ON c.nurse_ID = nurseID
+                                    AND c.vitals_ID = v.vitals_ID
+                                    AND c.dates < CURRENT_DATE() - INTERVAL 1 DAY
+                                 JOIN belongs_to AS bt
+                                     ON bt.pat_ID = patId
+                       )
+           )
+	    )
+	    THEN
+
+            INSERT INTO  VitalSigns VALUES (NULL, temp, pulse_arg, bp, resp);
+            SET @vitalID = (SELECT LAST_INSERT_ID());
+            INSERT INTO belongs_to VALUES (patID, @vitalID);
+            INSERT INTO checks VALUES ( nurseID, @vitalID, CURRENT_DATE());
+
+        END IF;
+
+    END;
+
+# CALL check_vitals(1,8180385, 32,
+#     160,
+#     80,'N/A');
+
+
 # 5a
 CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
 	IN start_date DATE,
@@ -608,7 +661,8 @@ CREATE OR REPLACE PROCEDURE GetMedicineAllergyByMostPatients()
                         )
                 ) AS risky_medz
             ON m.med_ID = risky_medz.med_ID
-        ORDER BY risky_medz.pat_count DESC;
+        ORDER BY risky_medz.pat_count DESC
+        LIMIT 10;
     END;
 
 # 5d
@@ -617,8 +671,11 @@ CREATE OR REPLACE PROCEDURE GetResultsByPatient(
 )
 	BEGIN
         SELECT
-           test_result,
-           scn_img_ID
+               types AS TestType,
+               name AS TestName,
+                test_result AS TestResult,
+                scn_img AS Attatchment,
+               pt.dates AS TestDate
         FROM
              performs_test AS pt
              JOIN tests AS t
@@ -629,9 +686,13 @@ CREATE OR REPLACE PROCEDURE GetResultsByPatient(
             JOIN results AS r
                 ON gr.result_ID = r.result_ID
             LEFT JOIN attached_to AS at
-                ON r.result_ID = at.result_ID;
+                ON r.result_ID = at.result_ID
+            LEFT JOIN scnimg AS si
+                ON at.scn_img_ID = si.scn_img_ID;
 	    # WHERE pat_ID = patID;
     END;
+
+# CALL GetResultsByPatient(8180402);
 
 # 5e
 CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
@@ -641,47 +702,72 @@ CREATE OR REPLACE PROCEDURE GetNursesByPatientAndDate(
 )
 	BEGIN
         SELECT
-               nurse_ID,
+               n.nurse_ID,
                fname,
-               lname
-        FROM Nurses
-            WHERE nurse_id IN(
-                    SELECT
-                           nurse_id
-                    FROM administers
-                    WHERE (dates BETWEEN
-                                start_date AND end_date)
-                        AND pat_ID = patID);
+               lname,
+               gen_name,
+               dosage,
+               date_time
+        FROM Nurses AS n
+        JOIN administers AS a
+            ON n.nurse_ID = a.nurse_ID
+        JOIN medication m on a.med_ID = m.med_ID
+        WHERE (date_time BETWEEN
+                    start_date AND end_date)
+            AND pat_ID = patID;
     END;
+
+#CALL GetNursesByPatientAndDate('2020-05-16','2020-05-26',8180394);
 
 # 5f
 CREATE OR REPLACE PROCEDURE GetInternsByMostPatient()
 	BEGIN
         SELECT
+               Doctors.doc_ID,
                fname,
-               lname
+               lname,
+               Amount
         FROM Doctors
-            WHERE doc_ID IN(
-                    SELECT
-                           Newb.doc_ID
-                    FROM Intern AS Newb,
-                         performs_treatment AS Help
-                    WHERE Newb.doc_ID = Help.doc_ID
-                        AND Help.doc_ID IN(
-                                SELECT
-                                       doc_ID
+        JOIN (
+                SELECT
+                       doc_ID,
+                       COUNT(pat_ID) AS Amount
+                FROM performs_treatment
+                GROUP BY doc_ID
+                    HAVING COUNT(pat_ID) > (
+                            SELECT AVG(pt_avg.Amount)
+                            FROM (
+                                SELECT COUNT(pat_ID) AS Amount
                                 FROM performs_treatment
                                 GROUP BY doc_ID
-                                    HAVING COUNT(pat_ID) > (
-                                            SELECT AVG(pt_avg.Amount)
-                                            FROM (
-                                                SELECT COUNT(pat_ID) AS Amount
-                                                FROM performs_treatment
-                                                GROUP BY doc_ID
-                                                ) AS pt_avg
-                                        )
-                            )
-                );
+                                ) AS pt_avg
+                        )
+                ) AS h1 ON Doctors.doc_ID = h1.doc_ID;
+    END;
+
+
+CREATE OR REPLACE PROCEDURE GetInternPerformanceData()
+	BEGIN
+        SELECT
+               i.doc_ID,
+               fname,
+               lname,
+               COUNT(pat_ID) AS amount,
+               last_7_days.dates
+        FROM (
+            SELECT DISTINCT
+                              dates
+                FROM performs_treatment
+                WHERE dates > CURRENT_DATE() - INTERVAL 7 DAY
+            ) AS last_7_days
+            LEFT JOIN performs_treatment AS pt
+                ON pt.dates = last_7_days.dates
+            LEFT JOIN intern AS i
+                ON pt.doc_ID = i.doc_ID
+            LEFT JOIN doctors d
+                ON i.doc_ID = d.doc_ID
+        GROUP BY last_7_days.dates,i.doc_ID
+        ORDER BY last_7_days.dates ASC, amount DESC;
     END;
 
 #  OTHER Store Procedures
@@ -890,6 +976,26 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE check_vitals TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetMedicineAllergyByMostPatients TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetResultsByPatient TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetNursesByPatientAndDate TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
             SET @sql = CONCAT('GRANT Nurse TO \'',@username,'\'@\'%\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
@@ -951,6 +1057,31 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetMedicineAllergyByMostPatients TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetInternsByMostPatient TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetInternPerformanceData TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetResultsByPatient TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetNursesByPatientAndDate TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
             SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE get_patients TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
@@ -969,6 +1100,7 @@ CREATE OR REPLACE PROCEDURE
             INSERT INTO Doctors VALUES (NULL, fname, lname, dob, address, phone);
         END IF;
     END;
+
 
 
 
@@ -1007,6 +1139,11 @@ GRANT SELECT ON mysql.global_priv TO AppUser;
 #
 ## CALL sp_add_patient('Bill', 'Willy', '1990-04-01', '2 Will Way', 8349602);
 #  CALL sp_add_secretary('Carla', 'Davis', '1990-12-11', '123 Main Street', 4759309);
-#  CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
+#   CALL sp_add_nurse('Susan', 'Wilby', '1990-02-01', '183 5th Street', 3759245, 'registered');
+#   CALL sp_add_nurse('Sarah', 'DeBarg', '1992-12-05', '34 Larry Close', 8469352, 'registered');
+#   CALL sp_add_nurse('Becky', 'Witdagudhair', '1995-05-20', '12 Citrus Avenue', 3759245, '');
 #  CALL sp_add_doctor('Jeff', 'Rights', '1990-12-11', '345 Wilbo Avenue', 3472893);
+#  CALL sp_add_doctor('Beverly', 'Hill', '1940-06-15', '100 Beverly Hills', 5478945);
+#  CALL sp_add_doctor('Suzie', 'Queue', '1960-05-15', '100 Beverly Hills', 9478365);
+#  CALL sp_add_doctor('Jabar', 'Code', '1946-12-06', '100 Beverly Hills', 6789457);
 #  CALL sp_add_doctor('John', 'Jones', '1937-01-01', '346 Johnson Avenue', 4325763);
