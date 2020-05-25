@@ -17,11 +17,3 @@ run the following command
 ```python app.py```
 
 
-
-
-
-
-> To Do:
->- create queries for other requests
->- create corresponding dataconnector functions and context_processors
- 
