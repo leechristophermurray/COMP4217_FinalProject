@@ -1187,7 +1187,7 @@
       <RoutineKind>procedure</RoutineKind>
     </routine>
     <routine id="407" parent="4" name="get_patients">
-      <SourceTextLength>340</SourceTextLength>
+      <SourceTextLength>373</SourceTextLength>
       <Definer>root@localhost</Definer>
       <RoutineKind>procedure</RoutineKind>
     </routine>

@@ -26,7 +26,7 @@ token = r['access_token']
 def search_term(term):
     # access ICD API
     uri = 'https://id.who.int/icd/entity/search'
-
+    print(term)
     payload['q'] = term
 
     # HTTP header fields to set

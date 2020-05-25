@@ -850,6 +850,7 @@ CREATE OR REPLACE PROCEDURE
         WHERE LOCATE(q, fname)
             OR LOCATE(q, lname)
             OR LOCATE(q, CONCAT(fname, ' ', lname))
+            OR LOCATE(q, pat_ID)
         ORDER BY RAND()
         LIMIT 30;
 
