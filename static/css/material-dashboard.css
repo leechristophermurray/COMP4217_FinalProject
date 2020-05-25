@@ -629,7 +629,7 @@ img {
 }
 
 svg:not(:root) {
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 table {
