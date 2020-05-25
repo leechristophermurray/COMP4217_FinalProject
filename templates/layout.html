@@ -26,14 +26,17 @@
 
     <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/mobile/bootstrap-table-mobile.min.js"></script>
-  </head>>
+      <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='img/logo.png') }}" />
+  </head>
 
   <body class="dark-edition">
-    <diclass="wrapper ">
+    <div class="wrapper ">
         <div class="main-panel">
             {% block content %}{% endblock %}
         </div>
-    </di>
+    </div>
   {% include 'corejs.html' %}
   </body>
 
