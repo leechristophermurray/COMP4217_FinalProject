@@ -192,7 +192,7 @@ md = {
 
                   optionsDailySalesChart = {
                     lineSmooth: Chartist.Interpolation.cardinal({
-                      tension: 0
+                      tension: 0,
                     }),
                     low: 0,
                     high: 30, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
@@ -206,7 +206,9 @@ md = {
                       Chartist.plugins.legend({
                         legendNames: res.legendNames,
                     })
-                    ]
+                    ],
+                      width: '100%',
+                      height: '500px'
                   };
 
                   // var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
@@ -275,7 +277,9 @@ md = {
                       right: 5,
                       bottom: 0,
                       left: 0
-                    }
+                    },
+                      width: '100%',
+                      height: '500px'
                   };
                   var responsiveOptions = [
                     ['screen and (max-width: 640px)', {

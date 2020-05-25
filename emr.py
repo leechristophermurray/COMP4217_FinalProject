@@ -176,15 +176,28 @@ def GetMedicineAllergyByMostPatients_forchart():
 def GetInternPerformanceData():
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
         data = con.GetInternPerformanceData()
-        for_legend = list(set([(str(d[1]) + ' ' + str(d[2])) for d in data]))
+        data_top = con.GetInternsByMostPatient()
+        id_most = [(str(d[0]) + ' ' + str(d[1])) for d in data_top]
+        for_legend = list(set([(str(d[1]) + ' ' + str(d[2]))for d in data]))
+        temp = []
+
+        for d in for_legend:
+            if d in id_most:
+                temp += [d+'*']
+            else:
+                temp += [d]
+
+        for_legend = temp
+
         for_label = list(set([(str(d[4])) for d in data]))
         for_label.sort()
         for_series = []
+
         for name in for_legend:
             series = []
             for date in for_label:
                 for d in data:
-                    if (str(d[4]) == date) and (str(d[1]) + ' ' + str(d[2]) == name):
+                    if (str(d[4]) == date) and (str(d[1]) + ' ' + str(d[2]) == name.replace('*', '')):
                         series.append(d[3])
             for_series += [series]
         return {'legendNames': for_legend, 'labels': for_label, 'series': for_series}
