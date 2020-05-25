@@ -22278,3 +22278,11 @@ thead * {
 #__lpform_fname_icon{
   display: none !important
 }
+
+
+.ct-axis-title{
+  fill: #f1f1f1;
+  position: relative;
+  top: 10px;
+
+}

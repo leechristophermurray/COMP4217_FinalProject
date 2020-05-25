@@ -212,7 +212,7 @@ md = {
                                 axisClass: 'ct-axis-title',
                                 offset: {
                                   x: 0,
-                                  y: 25
+                                  y: 28
                                 },
                                 textAnchor: 'middle'
                               },
@@ -306,7 +306,7 @@ md = {
                                 axisClass: 'ct-axis-title',
                                 offset: {
                                   x: 0,
-                                  y: 25
+                                  y: 28
                                 },
                                 textAnchor: 'middle'
                               },
