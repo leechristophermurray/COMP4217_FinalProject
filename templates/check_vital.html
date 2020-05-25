@@ -7,22 +7,22 @@
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
-                                      <div class="input-group no-border">
-                                          <select id="diagnosis_search" class="form-control basicAutoSelect" name="simple_select"
-                                            placeholder="search for diagnosis type using WHO's ICD catalogue..."
-                                            data-url="{{url_for('autocomplete_icd')}}" autocomplete="off"></select>
-                                            <span class="input-group-addon">
-                                                <i class="material-icons">search</i>
-                                            </span>
-                                          <div class="ripple-container"></div>
-                                      </div>
+{#                                      <div class="input-group no-border">#}
+{#                                          <select id="diagnosis_search" class="form-control basicAutoSelect" name="simple_select"#}
+{#                                            placeholder="search for diagnosis type using WHO's ICD catalogue..."#}
+{#                                            data-url="{{url_for('autocomplete_icd')}}" autocomplete="off"></select>#}
+{#                                            <span class="input-group-addon">#}
+{#                                                <i class="material-icons">search</i>#}
+{#                                            </span>#}
+{#                                          <div class="ripple-container"></div>#}
+{#                                      </div>#}
 
 
                                   </div>
-                                    <form id="diagnosisModalCenterForm" action="{{ url_for('make_diagnosis') }}" method="post">
+                                    <form id="diagnosisModalCenterForm" action="{{ url_for('check_vitals') }}" method="post">
                                         <div class="modal-body">
 
-                                            <blockquote> Before diagnosing or prescribing, please check the Medical Information in the tables below.</blockquote>
+                                            <blockquote>Consider the patient's medical information listen below- to ensure you do all necessary checks.</blockquote>
 
                                             <div class="card">
                                                 <div class="card-header card-header-tabs card-header-warning">
@@ -65,11 +65,11 @@
                                                         >
                                                             <thead class="text-warning">
 
-                                                            <tr>
-                                                                <th data-field="AllergenID">Allergen ID</th>
-                                                                <th data-field="AllergenType">Allergen Type</th>
-                                                                <th data-field="Allergen">Allergen</th>
-                                                            </tr>
+                                                                <tr>
+                                                                    <th data-field="AllergenID">Allergen ID</th>
+                                                                    <th data-field="AllergenType">Allergen Type</th>
+                                                                    <th data-field="Allergen">Allergen</th>
+                                                                </tr>
                                                             </thead>
                                                             <tbody>
                                                             </tbody>
@@ -149,13 +149,9 @@
 
 
                                         <div id="fixed_fields">
-                                            <input type="text" class="form-control invisible" id="diagnosis_searchField"  name="diagnosis_search" readonly
-                                            value = "">
-                                            <input type="text" class="form-control invisible" id="d_docID"  name="docID" readonly
+                                            <input type="text" class="form-control invisible" id="d_nurseID"  name="nurseID" readonly
                                             value = "">
                                             <input type="text" class="form-control invisible" id="d_patID"  name="patID" readonly
-                                            value = "">
-                                            <input type="text" class="form-control invisible" id="d_icdID"  name="icdID" readonly
                                             value = "">
                                         </div>
 
@@ -226,24 +222,51 @@
                                         <div class="row">
                                           <div class="col-md-6">
                                             <div class="form-group">
-                                              <label class="bmd-label">ICD Title</label>
+                                              <label class="bmd-label">Temperature</label>
                                                     <div class='input-group' id='phone_num'>
-                                                        <input type="text" class="form-control" id="d_icdDesc"  name="desc" readonly
+                                                        <input type="text" class="form-control" id="d_temp"  name="temp"
                                                         value = "">
                                                             <span class="input-group-addon">
-                                                                <i class="material-icons">description</i>
+                                                                <i class="material-icons">whatshot</i>
                                                             </span>
                                                     </div>
                                             </div>
                                           </div>
                                           <div class="col-md-6">
                                             <div class="form-group">
-                                              <label class="bmd-label">Specifics</label>
+                                              <label class="bmd-label">Pulse</label>
                                                     <div class='input-group' id='phone_num'>
-                                                        <input type="text" class="form-control" id="d_icdSpecs"  name="specs"
+                                                        <input type="text" class="form-control" id="d_pulse_arg"  name="pulse_arg"
                                                         value = "">
                                                             <span class="input-group-addon">
-                                                                <i class="material-icons">subject</i>
+                                                                <i class="material-icons">show_chart</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="row">
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Blood Pressure</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_bp"  name="bp"
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">opacity</i>
+                                                            </span>
+                                                    </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label class="bmd-label">Respiratory</label>
+                                                    <div class='input-group' id='phone_num'>
+                                                        <input type="text" class="form-control" id="d_resp"  name="resp"
+                                                        value = "">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">waves</i>
                                                             </span>
                                                     </div>
                                             </div>

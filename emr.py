@@ -65,6 +65,20 @@ def get_patients():
         return pats
 
 
+@app.route('/GetPatientByDiagnosisAndDate', methods=['GET', 'POST'])
+def GetPatientByDiagnosisAndDate():
+    search = request.args.get('search')
+    # print(search)
+    startDate = datetime.date(datetime.now()) - timedelta(days=7)
+    endDate = datetime.date(datetime.now())
+    with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+        pats = con.GetPatientByDiagnosisAndDate(startDate, endDate, search)
+        columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
+        pats = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
+        print(pats)
+        return pats
+
+
 @app.route('/reg_patient', methods=['POST'])
 def reg_patient():
     error = None
@@ -107,17 +121,29 @@ def make_diagnosis():
     return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 
 
-@app.route('/get_patient_by_diagnosis_and_date', methods=['GET', 'POST'])
-def get_patient_by_diagnosis_and_date():
-    search = request.args.get('search')
-    # print(search)
+@app.route('/check_vitals', methods=['POST'])
+def check_vitals():
+    error = None
+
+    # nurseID = request.form['nurseID']
+    patID = request.form['patID']
+    temp = request.form['temp']
+    pulse_arg = request.form['pulse_arg']
+    bp = request.form['bp']
+    resp = request.form['resp']
+
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
-        pats = con.get_patient_by_diagnosis_and_date(request.form['start_date'], request.form['end_date'],
-                                                     request.form['diag_ID'])
-        columns = ['pat_ID', 'fname', 'lname', 'dob', 'address', 'phone']
-        pats = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pats])
-        print(pats)
-        return pats
+        usr = con.login()
+        nurseID = usr[1]
+    if request.method == 'POST':
+        if app.config['SQL_CRED']['USR'] == '' or app.config['SQL_CRED']['PWD'] == '':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
+                print(nurseID, patID, temp, pulse_arg, bp, resp)
+                con.check_vitals(nurseID, patID, temp, pulse_arg, bp, resp)
+                return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
+    return render_template('home.html', usr=app.config['SQL_CRED']['USR'])
 
 
 @app.route('/get_allergens_of_patient', methods=['GET', 'POST'])
@@ -129,6 +155,10 @@ def get_allergens_of_patient():
     print('patID:', patID)
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
         allergens = con.get_allergens_of_patient(patID)
+        if allergens and len(allergens) > 0:
+            print("YEP! Good to go!")
+        else:
+            allergens = [(' ', ' ', ' ', ' ', ' ')]
         columns = ['AllergenID', 'AllergenType', 'Allergen', 'FirstName', 'LastName']
         allergens = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in allergens])
         print(allergens)
@@ -180,6 +210,10 @@ def GetResultsByPatient():
     print('patID:', patID)
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
         pat_results = con.GetResultsByPatient(patID)
+        if pat_results and len(pat_results) > 0:
+            print("YEP! Good to go!")
+        else:
+            pat_results = [(' ', ' ', ' ', ' ', ' ')]
         columns = ['TestType', 'TestName', 'TestResult', 'Attachment', 'TestDate']
         pat_results = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in pat_results])
         print(pat_results)
@@ -205,6 +239,10 @@ def GetNursesByPatientAndDate():
     endDate = datetime.date(datetime.now())
     with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['USR']) as con:
         nurses = con.GetNursesByPatientAndDate(startDate, endDate, patID)
+        if nurses and len(nurses) > 0:
+            print("YEP! Good to go!")
+        else:
+            nurses = [(' ', ' ', ' ', ' ', ' ', ' ')]
         columns = ['nurse_ID', 'fname', 'lname', 'gen_name', 'dosage', 'date_time']
         nurses = jsonify([{k: str(val) for val, k in zip(row, columns)} for row in nurses])
         print(nurses)
@@ -271,6 +309,15 @@ def utility_processor():
             pats = [[str(val) for val in row] for row in pats]
             return pats
 
+    def GetPatientByDiagnosisAndDate(q=""):
+        startDate = datetime.date(datetime.now()) - timedelta(days=7)
+        endDate = datetime.date(datetime.now())
+        with dataconnector.Connection(app.config['SQL_CRED']['USR'], app.config['SQL_CRED']['PWD']) as con:
+            pats = con.GetPatientByDiagnosisAndDate(startDate, endDate, q)
+            pats = [[str(val) for val in row] for row in pats]
+            return pats
+
     return {'get_role': get_role, 'get_doctors': get_doctors, 'get_nurses': get_nurses, 'reg_patient': reg_patient,
             'GetMedicineAllergyByMostPatients_perm': GetMedicineAllergyByMostPatients_perm,
-            'GetInternPerformanceData_perm': GetInternPerformanceData_perm, 'get_patients': get_patients}
+            'GetInternPerformanceData_perm': GetInternPerformanceData_perm,
+            'GetPatientByDiagnosisAndDate': GetPatientByDiagnosisAndDate,'get_patients': get_patients}

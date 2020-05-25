@@ -1,41 +1,115 @@
 
                         <div id="patient_table_card" class="card">
                             <div class="card-header card-header-primary">
-                                <h4 class="card-title">All Patients</h4>
-                                <p class="card-category"><b>NOTICE:</b> Please take extra precaution, due to the COVID-19 pandemic.</p>
+
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <span class="nav-tabs-title">All Patients:</span>
+                                        <p class="card-category"><b>NOTICE:</b> Please take extra precaution, due to the COVID-19 pandemic.</p>
+                                      <ul class="nav nav-tabs" data-tabs="tabs">
+                                        <li class="nav-item">
+                                          <a class="nav-link active" href="#general" data-toggle="tab">
+                                            <i class="material-icons">bug_report</i> General
+                                            <div class="ripple-container"></div>
+                                          </a>
+                                        </li>
+                                        <li class="nav-item">
+                                          <a class="nav-link" href="#diagnosed" data-toggle="tab">
+                                            <i class="material-icons">local_pharmacy</i> Diagnosed
+                                            <div class="ripple-container"></div>
+                                          </a>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="card-body table-responsive">
-                                <table class="table table-hover"
-                                      id="patient_search_table"
-                                       data-toggle="table"
-                                      data-search="true"
-                                       data-side-pagination="server"
-                                      data-show-search-button="true"
-                                      data-show-search-clear-button="true"
-                                       data-defer-url="{{url_for('get_allergens_of_patient')}}"
-                                       data-ajax="ajaxRequest_patients"
-                                       data-cache="false"
-                                      data-single-select="true"
-                                      data-click-to-select="true"
-                                       data-row-attributes="patRowAttr"
-                                >
-                                    <thead class="text-warning">
+                                  <div class="tab-content">
+                                    <div class="tab-pane active" id="general">
 
-                                    <tr>
-                                        <th data-field="pat_ID">ID</th>
-                                        <th data-field="lname">Last Name</th>
-                                        <th data-field="fname">First Name</th>
-                                        <th data-field="dob">Date of Birth</th>
-                                        <th data-field="address">Address</th>
-                                        <th data-field="phone">Contact</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                                        <table class="table table-hover"
+                                              id="patient_search_table"
+                                               data-toggle="table"
+                                              data-search="true"
+                                               data-side-pagination="server"
+                                              data-show-search-button="true"
+                                              data-show-search-clear-button="true"
+                                               data-defer-url="{{url_for('get_allergens_of_patient')}}"
+                                               data-ajax="ajaxRequest_patients"
+                                               data-cache="false"
+                                              data-single-select="true"
+                                              data-click-to-select="true"
+                                               data-row-attributes="patRowAttr"
+                                        >
+                                            <thead class="text-warning">
+
+                                            <tr>
+                                                <th data-field="pat_ID">ID</th>
+                                                <th data-field="lname">Last Name</th>
+                                                <th data-field="fname">First Name</th>
+                                                <th data-field="dob">Date of Birth</th>
+                                                <th data-field="address">Address</th>
+                                                <th data-field="phone">Contact</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
 
 
-                            {% include 'diagnosis.html' %}
+
+                                        {% if error %}
+                                            <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="tab-pane" id="diagnosed">
+
+                                        <table class="table table-hover"
+                                              id="patient_search_table"
+                                               data-toggle="table"
+                                              data-search="true"
+                                               data-side-pagination="server"
+                                              data-show-search-button="true"
+                                              data-show-search-clear-button="true"
+                                               data-defer-url="{{url_for('get_allergens_of_patient')}}"
+                                               data-ajax="ajaxRequest_GetPatientByDiagnosisAndDate"
+                                               data-cache="false"
+                                              data-single-select="true"
+                                              data-click-to-select="true"
+                                               data-row-attributes="patRowAttr"
+                                        >
+                                            <thead class="text-warning">
+
+                                            <tr>
+                                                <th data-field="pat_ID">ID</th>
+                                                <th data-field="lname">Last Name</th>
+                                                <th data-field="fname">First Name</th>
+                                                <th data-field="dob">Date of Birth</th>
+                                                <th data-field="address">Address</th>
+                                                <th data-field="phone">Contact</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+
+
+
+                                        {% if error %}
+                                            <p class="error"><strong>Error:</strong> {{ error_msg }}</p>
+                                        {% endif %}
+
+                                    </div>
+                                  </div>
+
+                                {% if get_role()[4] == "Doctor"  %}
+                                            {% include 'diagnosis.html' %}
+                                {% endif %}
+                                {% if get_role()[4] == "Nurse"  %}
+                                            {% include 'check_vital.html' %}
+                                {% endif %}
 
 
 

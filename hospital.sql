@@ -543,12 +543,20 @@ CREATE OR REPLACE PROCEDURE GetPatientByDiagnosisAndDate(
 	IN diagnosis VARCHAR(100)
 )
 	BEGIN
-        SELECT fname,lname FROM Patients
+        SELECT
+               pat_ID,
+               fname,
+               lname,
+               dob,
+               address,
+               phone
+        FROM Patients
             WHERE pat_ID IN(
                     SELECT pat_ID FROM makes_diagnosis
                         WHERE dates BETWEEN start_date AND end_date AND diag_ID IN(
                     SELECT diag_ID FROM Diagnosis AS d
-                        WHERE d.name = diagnosis)
+                        WHERE LOCATE(diagnosis,d.name)
+                            OR LOCATE(diagnosis,d.specifics_details))
                 );
     END;
 
@@ -976,6 +984,12 @@ CREATE OR REPLACE PROCEDURE
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
 
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetPatientByDiagnosisAndDate TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
             SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE check_vitals TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
@@ -1078,6 +1092,11 @@ CREATE OR REPLACE PROCEDURE
             DEALLOCATE PREPARE stmt;
 
             SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetNursesByPatientAndDate TO \'',@username,'\'');
+            PREPARE stmt from @sql;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            SET @sql = CONCAT('GRANT EXECUTE ON PROCEDURE GetPatientByDiagnosisAndDate TO \'',@username,'\'');
             PREPARE stmt from @sql;
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;

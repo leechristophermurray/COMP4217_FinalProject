@@ -354,6 +354,17 @@
             }
         );
   }
+
+
+  function ajaxRequest_GetPatientByDiagnosisAndDate(params) {
+        console.log(params)
+        $.get(
+            '/GetPatientByDiagnosisAndDate' + '?' + $.param(params.data)).then(function (res) {
+                console.log(res);
+                params.success(res);
+            }
+        );
+  }
 </script>
 
 

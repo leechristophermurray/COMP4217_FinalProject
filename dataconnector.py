@@ -140,6 +140,20 @@ class Connection:
         finally:
             return data
 
+    def GetPatientByDiagnosisAndDate(self, start_date, end_date, diagnosis=""):
+        data = ()
+
+        # prepare a cursor object using cursor() method
+        with self.CON.cursor() as cursor:
+
+            # execute SQL query using execute method
+            cursor.execute("CALL GetPatientByDiagnosisAndDate('" + str(start_date) + "', '"
+                            + str(end_date) + "', '" + str(diagnosis) + "');")
+
+            # fetch all the tuples in a list of lists
+            data = cursor.fetchall()
+        return data
+
     def get_allergens_of_patient(self, patID):
         data = ()
 
@@ -196,6 +210,24 @@ class Connection:
             self.CON.commit()
             return data
 
+    def check_vitals(self, nurseID, patID, temp, pulse_arg, bp, resp):
+        data = ()
+
+        try:
+            # prepare a cursor object using cursor() method
+            with self.CON.cursor() as cursor:
+                # execute SQL query using execute() method.
+                cursor.execute("CALL check_vitals(" + str(nurseID) + ", " + str(patID) + ", " + str(temp) + ", '" +
+                               str(pulse_arg) + "', '" + str(bp) + "', '" + str(resp) + "');")
+
+
+        except pymysql.err.OperationalError as e:
+            return data
+
+        finally:
+            self.CON.commit()
+            return data
+
     def login(self):
 
         data = ()
@@ -237,20 +269,6 @@ class Connection:
 
         finally:
             return data
-
-    def get_patient_by_diagnosis_and_date(self, start_date, end_date, diag_ID):
-        data = ()
-
-        # prepare a cursor object using cursor() method
-        with self.CON.cursor() as cursor:
-
-            # execute SQL query using execute method
-            cursor.execute("CALL get_patient_by_diagnosis_and_date('" + str(start_date) + "', '"
-                            + str(end_date) + "', '" + str(diag_ID) + "');")
-
-            # fetch all the tuples in a list of lists
-            data = cursor.fetchall()
-        return data
 
     def GetNursesByPatientAndDate(self, start_date, end_date, pat_ID):
         data = ()

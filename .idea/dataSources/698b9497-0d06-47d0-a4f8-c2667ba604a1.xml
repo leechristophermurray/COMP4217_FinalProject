@@ -1162,7 +1162,7 @@
       <RoutineKind>procedure</RoutineKind>
     </routine>
     <routine id="402" parent="4" name="GetPatientByDiagnosisAndDate">
-      <SourceTextLength>347</SourceTextLength>
+      <SourceTextLength>549</SourceTextLength>
       <Definer>root@localhost</Definer>
       <RoutineKind>procedure</RoutineKind>
     </routine>
