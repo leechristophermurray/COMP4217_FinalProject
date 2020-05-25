@@ -22254,3 +22254,23 @@ fieldset[disabled][disabled] .dark-edition .has-error .form-control,
  .ct-dimmed {
     opacity: 0.5;
  }
+
+#login_form {
+    height: 80vh !important;
+    align-items: center;
+    text-align: center;
+    vertical-align:middle !important;
+    //display: flex !important;
+}
+
+#login_form * {
+  margin: 0;
+  margin-top: 20px;
+  top: 45%;
+
+}
+
+thead * {
+  font-weight: 450 !important;
+  text-transform: uppercase !important;
+}
