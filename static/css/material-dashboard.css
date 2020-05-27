@@ -17699,6 +17699,14 @@ label {
 .card [class*="card-header-"] .ct-chart .ct-series-a .ct-slice-donut {
   stroke: rgba(255, 255, 255, 0.8);
 }
+@media print {
+  .card [class*="card-header-"] .ct-chart .ct-series-a .ct-point,
+  .card [class*="card-header-"] .ct-chart .ct-series-a .ct-line,
+  .card [class*="card-header-"] .ct-chart .ct-series-a .ct-bar,
+  .card [class*="card-header-"] .ct-chart .ct-series-a .ct-slice-donut {
+    stroke: rgba(61, 61, 61, 0.8);
+  }
+}
 
 .card [class*="card-header-"] .ct-chart .ct-series-a .ct-slice-pie,
 .card [class*="card-header-"] .ct-chart .ct-series-a .ct-area {
